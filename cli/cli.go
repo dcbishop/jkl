@@ -7,5 +7,11 @@ type Options struct {
 
 // ParseArgs takes arguments and returns a cli.Options. Will return error if parsing failed.
 func ParseArgs(args []string) (Options, error) {
-	return Options{}, nil
+	options := Options{}
+
+	if len(args) > 1 {
+		options.filesToOpen = args[1:]
+	}
+
+	return options, nil
 }
