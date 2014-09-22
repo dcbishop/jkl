@@ -11,6 +11,7 @@ func main() {
 	options, err := cli.ParseArgs(os.Args)
 
 	if err != nil {
+		fmt.Println("ERROR: Invalid arguments.", err)
 		fmt.Println(cli.Usage())
 		os.Exit(1)
 	}
