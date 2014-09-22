@@ -28,5 +28,10 @@ func TestParseArgs(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(result, ShouldResemble, Options{Help: true})
 		})
+		Convey("with invalid argument", func() {
+			result, err := ParseArgs([]string{"gim", "--badarg"})
+			So(err, ShouldNotBeNil)
+			So(result, ShouldResemble, Options{})
+		})
 	})
 }

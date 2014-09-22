@@ -1,6 +1,11 @@
 package cli
 
-import "github.com/docopt/docopt-go"
+import (
+	"os"
+
+	"github.com/codegangsta/cli"
+	"github.com/docopt/docopt-go"
+)
 
 // UsageMessage is the message displayed in the console giving the programs usage
 var UsageMessage = `gim
@@ -27,7 +32,10 @@ func ParseArgs(args []string) (Options, error) {
 		return options, nil
 	}
 
-	arguments, err := docopt.Parse(Usage(), args[1:], false, "gim 0.1", false)
+	disableStdout()
+	defer restoreStdout()
+
+	arguments, err := docopt.Parse(Usage(), args[1:], false, "gim 0.1", false, false)
 	if err != nil {
 		return options, err
 	}
@@ -39,10 +47,25 @@ func ParseArgs(args []string) (Options, error) {
 
 	options.FilesToOpen = arguments["<file>"].([]string)
 
+	app := cli.NewApp()
+	app.Name = "greet"
+	app.Usage = "test"
+
 	return options, nil
 }
 
 // Usage returns the usage message
 func Usage() string {
 	return UsageMessage
+}
+
+var initialStdout = os.Stdout
+
+func disableStdout() {
+	_, w, _ := os.Pipe()
+	os.Stdout = w
+}
+
+func restoreStdout() {
+	os.Stdout = initialStdout
 }
