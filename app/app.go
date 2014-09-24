@@ -6,7 +6,12 @@ import "github.com/dcbishop/gim/cli"
 type App struct{}
 
 // New constructs a new app from the given options.
-func New(options cli.Options) App {
+func New() App {
 	app := App{}
 	return app
+}
+
+// LoadOptions loads the given options
+func (app *App) LoadOptions(options cli.Options) {
+
 }

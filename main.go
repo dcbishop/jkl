@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/dcbishop/gim/app"
 	"github.com/dcbishop/gim/cli"
 )
 
 func main() {
+	options := processArguments()
+	app := app.New()
+	app.LoadOptions(options)
+}
+
+func processArguments() cli.Options {
 	options, err := cli.ParseArgs(os.Args)
 
 	if err != nil {
@@ -20,4 +27,6 @@ func main() {
 		fmt.Println(cli.Usage())
 		os.Exit(0)
 	}
+
+	return options
 }
