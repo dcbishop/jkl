@@ -40,13 +40,24 @@ func TestLoadOptions(t *testing.T) {
 }
 
 func TestOpenFile(t *testing.T) {
-	app := fakeApp()
-	Convey("with a valid filename, loads file into buffer", t, func() {
-		So(len(app.buffers), ShouldEqual, 0)
+	Convey("app.OpenFile", t, func() {
+		app := fakeApp()
+		Convey("with a valid filename, loads file into buffer", func() {
+			So(len(app.buffers), ShouldEqual, 0)
 
-		app.OpenFile("fakefile.txt")
+			app.OpenFile(fakeFileName)
 
-		So(len(app.buffers), ShouldEqual, 1)
-		So(app.buffers[0].data, ShouldResemble, fakeFileContents)
+			So(len(app.buffers), ShouldEqual, 1)
+			So(app.buffers[0].data, ShouldResemble, fakeFileContents)
+			So(app.buffers[0].filename, ShouldResemble, fakeFileName)
+		})
+
+		Convey("with nonexistant file, opens a blank buffer with that filename", func() {
+			So(len(app.buffers), ShouldEqual, 0)
+			app.OpenFile("file2.txt")
+			So(len(app.buffers), ShouldEqual, 1)
+			So(app.buffers[0].data, ShouldResemble, []byte{})
+			So(app.buffers[0].filename, ShouldResemble, "file2.txt")
+		})
 	})
 }

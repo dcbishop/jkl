@@ -12,8 +12,10 @@ type App struct {
 	currentBuffer *Buffer
 }
 
+// Buffer contains the text to edit
 type Buffer struct {
-	data []byte
+	filename string
+	data     []byte
 }
 
 // New constructs a new app from the given options.
@@ -27,14 +29,27 @@ func (app *App) LoadOptions(options cli.Options) {
 
 }
 
+// OpenFiles opens a list of files into buffers.
+func (app *App) OpenFiles(filenames []string) {
+	for _, filename := range filenames {
+		app.OpenFile(filename)
+	}
+}
+
 // OpenFile opens a file.
 func (app *App) OpenFile(filename string) {
-	data, err := app.fa.ReadFile(filename)
-	if err != nil {
-		// [TODO]: Error handling...
-		return
+	buffer := NewBuffer()
+
+	if data, err := app.fa.ReadFile(filename); err == nil {
+		buffer.data = data
+	} else {
+		// [TODO]: Error handling. Non-existant files shouldn't cause a problem,
+		// but ones that do exist but can't open should show an error.
+		buffer.data = []byte{}
 	}
-	buffer := NewBuffer(data)
+
+	buffer.filename = filename
+
 	app.AddBuffer(buffer)
 }
 
@@ -44,6 +59,6 @@ func (app *App) AddBuffer(buffer Buffer) {
 }
 
 // NewBuffer constructs a new Buffer object containing data.
-func NewBuffer(data []byte) Buffer {
-	return Buffer{data: data}
+func NewBuffer() Buffer {
+	return Buffer{}
 }
