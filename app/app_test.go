@@ -10,9 +10,11 @@ import (
 
 var fakeFileName = "fakefile.txt"
 var fakeFileContents = []byte(`Hello, this is a test`)
+var fakeFileContents2 = []byte(`This is the 2nd file!`)
 
 var fakeFileSystem = map[string][]byte{
-	"fakefile.txt": fakeFileContents,
+	"fakefile.txt":  fakeFileContents,
+	"fakefile2.txt": fakeFileContents,
 }
 
 var fakeFileAccessor = fileaccessor.Virtual{fakeFileSystem}
@@ -36,6 +38,13 @@ func TestLoadOptions(t *testing.T) {
 		app.LoadOptions(options)
 
 		So(app, ShouldResemble, fakeApp())
+	})
+	Convey("with 2 filenames given", t, func() {
+		options, err := cli.ParseArgs([]string{"gim", "fakefile.txt", "fakefile2.txt"})
+		So(err, ShouldBeNil)
+
+		app.LoadOptions(options)
+		So(len(app.buffers), ShouldEqual, 2)
 	})
 }
 
