@@ -1,18 +1,19 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/codegangsta/cli"
+	"github.com/dcbishop/gim/globals"
 	"github.com/docopt/docopt-go"
 )
 
-// UsageMessage is the message displayed in the console giving the programs usage
-var UsageMessage = `gim
+var usageMessage = `%[1]s
 
 Usage:
-  gim [<file>...]
-  gim -h | --help
+  %[2]s [<file>...]
+  %[2]s -h | --help
 
 Options:
   -h --help     Show this screen.
@@ -32,10 +33,13 @@ func ParseArgs(args []string) (Options, error) {
 		return options, nil
 	}
 
+	// Docopt.go doesn't seem to have a way to stop it spamming the console.
 	disableStdout()
 	defer restoreStdout()
 
-	arguments, err := docopt.Parse(Usage(), args[1:], false, "gim 0.1", false, false)
+	version := globals.Name() + " " + globals.VersionString()
+
+	arguments, err := docopt.Parse(Usage(), args[1:], false, version, false, false)
 	if err != nil {
 		return options, err
 	}
@@ -56,7 +60,7 @@ func ParseArgs(args []string) (Options, error) {
 
 // Usage returns the usage message
 func Usage() string {
-	return UsageMessage
+	return fmt.Sprintf(usageMessage, globals.Name(), globals.Executable())
 }
 
 var initialStdout = os.Stdout
