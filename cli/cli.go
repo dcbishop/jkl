@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/codegangsta/cli"
 	"github.com/dcbishop/gim/globals"
 	"github.com/docopt/docopt-go"
 )
@@ -50,10 +49,6 @@ func ParseArgs(args []string) (Options, error) {
 	}
 
 	options.FilesToOpen = arguments["<file>"].([]string)
-
-	app := cli.NewApp()
-	app.Name = "greet"
-	app.Usage = "test"
 
 	return options, nil
 }
