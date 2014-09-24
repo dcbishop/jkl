@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/gim/app"
 	"github.com/dcbishop/gim/cli"
 )
 
 func main() {
 	options := processArguments()
-	app := app.New()
+	app := app.New(fileaccessor.LocalStorage{})
 	app.LoadOptions(options)
 }
 
