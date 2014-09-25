@@ -109,7 +109,7 @@ func NewRuneGrid(width, height uint) RuneGrid {
 // wrap sets line wrapping on
 // linebrake sets soft wrapping
 func (grid *RuneGrid) RenderBuffer(
-	x, y, width, height uint,
+	x, y, x2, y2 uint,
 	buffer *Buffer,
 	wrap,
 	linebrake,
@@ -127,7 +127,9 @@ func (grid *RuneGrid) RenderBuffer(
 			xPos = x
 			continue
 		}
-		grid.SetCell(xPos, yPos, rune(r))
+		if xPos <= x2 && yPos <= y2 {
+			grid.SetCell(xPos, yPos, rune(r))
+		}
 		xPos++
 	}
 }

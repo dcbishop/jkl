@@ -104,4 +104,32 @@ func TestRenderBuffer(t *testing.T) {
 
 		So(grid.cells, ShouldResemble, expected)
 	})
+	Convey("partially visible buffer", t, func() {
+		buffer := NewBuffer()
+		buffer.data = renderTest
+		grid := NewRuneGrid(3, 3)
+		expected := [][]rune{
+			{0, 0, 0},
+			{0, '1', 0},
+			{0, 0, 0},
+		}
+
+		grid.RenderBuffer(1, 1, 1, 1, &buffer, false, false, false, "")
+
+		So(grid.cells, ShouldResemble, expected)
+	})
+	Convey("larger partially visible buffer", t, func() {
+		buffer := NewBuffer()
+		buffer.data = renderTest
+		grid := NewRuneGrid(3, 3)
+		expected := [][]rune{
+			{'1', '2', 0},
+			{'4', '5', 0},
+			{0, 0, 0},
+		}
+
+		grid.RenderBuffer(0, 0, 1, 1, &buffer, false, false, false, "")
+
+		So(grid.cells, ShouldResemble, expected)
+	})
 }
