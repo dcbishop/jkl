@@ -70,3 +70,24 @@ func TestOpenFile(t *testing.T) {
 		})
 	})
 }
+
+var renderTest = []byte(`123
+456
+789`)
+
+func TestRenderBuffer(t *testing.T) {
+	Convey("Basic Buffer", t, func() {
+		buffer := NewBuffer()
+		buffer.data = renderTest
+		grid := NewRuneGrid(3, 3)
+		expected := [][]rune{
+			{'1', '2', '3'},
+			{'4', '5', '6'},
+			{'7', '8', '9'},
+		}
+
+		grid.RenderBuffer(0, 0, 3, 3, &buffer, false, false, false, "")
+
+		So(grid.cells, ShouldResemble, expected)
+	})
+}

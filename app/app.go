@@ -82,3 +82,71 @@ func (app *App) SetCurrentBuffer(buffer *Buffer) {
 func NewBuffer() Buffer {
 	return Buffer{}
 }
+
+// RuneGrid contains the rendered text UI
+type RuneGrid struct {
+	width  uint
+	height uint
+	cells  [][]rune
+}
+
+// NewRuneGrid constructs a RuneGrid with the given width and height
+func NewRuneGrid(width, height uint) RuneGrid {
+	grid := RuneGrid{
+		width:  width,
+		height: height,
+		cells:  make([][]rune, height),
+	}
+
+	for i := range grid.cells {
+		grid.cells[i] = make([]rune, width)
+	}
+
+	return grid
+}
+
+// RenderBuffer blits the buffer onto the grid.
+// wrap sets line wrapping on
+// linebrake sets soft wrapping
+func (grid *RuneGrid) RenderBuffer(
+	x, y, width, height uint,
+	buffer *Buffer,
+	wrap,
+	linebrake,
+	breakindent bool,
+	showbreak string,
+	// [TODO]: Should line numbering be done here?
+	// Otherwise how do we communicate the line numbers out. - 2014-09-24 11:50pm
+) {
+	grid.SetCell(0, 0, '!')
+
+	xPos := uint(0)
+	yPos := uint(0)
+
+	for _, r := range buffer.data {
+		if r == '\n' {
+			yPos++
+			xPos = 0
+			continue
+		}
+		grid.SetCell(xPos, yPos, rune(r))
+		xPos++
+	}
+}
+
+// SetCell sets a cell in the RuneGrid to the given rune
+func (grid *RuneGrid) SetCell(x, y uint, r rune) {
+	if !grid.IsCellValid(x, y) {
+		return
+	}
+
+	grid.cells[y][x] = r
+}
+
+// IsCellValid returns true if the cell coordinates are valid
+func (grid *RuneGrid) IsCellValid(x, y uint) bool {
+	if x >= grid.width || y >= grid.height {
+		return false
+	}
+	return true
+}
