@@ -118,15 +118,13 @@ func (grid *RuneGrid) RenderBuffer(
 	// [TODO]: Should line numbering be done here?
 	// Otherwise how do we communicate the line numbers out. - 2014-09-24 11:50pm
 ) {
-	grid.SetCell(0, 0, '!')
-
-	xPos := uint(0)
-	yPos := uint(0)
+	xPos := x
+	yPos := y
 
 	for _, r := range buffer.data {
 		if r == '\n' {
 			yPos++
-			xPos = 0
+			xPos = x
 			continue
 		}
 		grid.SetCell(xPos, yPos, rune(r))

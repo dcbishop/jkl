@@ -90,4 +90,18 @@ func TestRenderBuffer(t *testing.T) {
 
 		So(grid.cells, ShouldResemble, expected)
 	})
+	Convey("offset buffer", t, func() {
+		buffer := NewBuffer()
+		buffer.data = renderTest
+		grid := NewRuneGrid(3, 3)
+		expected := [][]rune{
+			{0, 0, 0},
+			{0, '1', '2'},
+			{0, '4', '5'},
+		}
+
+		grid.RenderBuffer(1, 1, 2, 2, &buffer, false, false, false, "")
+
+		So(grid.cells, ShouldResemble, expected)
+	})
 }
