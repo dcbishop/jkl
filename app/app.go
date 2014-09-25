@@ -10,6 +10,7 @@ type App struct {
 	fa            fileaccessor.FileAccessor
 	buffers       []Buffer
 	currentBuffer *Buffer
+	running       bool
 }
 
 // Buffer contains the text to edit
@@ -20,7 +21,10 @@ type Buffer struct {
 
 // New constructs a new app from the given options.
 func New(fa fileaccessor.FileAccessor) App {
-	app := App{fa: fa}
+	app := App{
+		fa:      fa,
+		running: true,
+	}
 	return app
 }
 
@@ -76,6 +80,22 @@ func (app *App) LastBuffer() *Buffer {
 
 // SetCurrentBuffer sets the currently visible buffer
 func (app *App) SetCurrentBuffer(buffer *Buffer) {
+}
+
+// Run starts the main loop of the app. Will block until finished.
+func (app *App) Run() {
+	for app.Running() {
+		app.Update()
+	}
+}
+
+// Running returns true if the app should be running
+func (app *App) Running() bool {
+	return app.running
+}
+
+// Update processes input and redraws the app.
+func (app *App) Update() {
 }
 
 // NewBuffer constructs a new Buffer object containing data.

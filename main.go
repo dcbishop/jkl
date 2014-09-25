@@ -13,6 +13,7 @@ func main() {
 	options := processArguments()
 	app := app.New(fileaccessor.LocalStorage{})
 	app.LoadOptions(options)
+	app.Run()
 }
 
 func processArguments() cli.Options {
