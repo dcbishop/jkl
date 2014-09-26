@@ -46,7 +46,7 @@ func (app *App) OpenFiles(filenames []string) {
 		bufferPtr := app.AddBuffer(buffer)
 
 		if i == 0 {
-			app.currentBuffer = bufferPtr
+			app.SetCurrentBuffer(bufferPtr)
 		}
 	}
 }
@@ -86,6 +86,7 @@ func (app *App) LastBuffer() *Buffer {
 
 // SetCurrentBuffer sets the currently visible buffer
 func (app *App) SetCurrentBuffer(buffer *Buffer) {
+	app.currentBuffer = buffer
 }
 
 // Run starts the main loop of the app. Will block until finished.
