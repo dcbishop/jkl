@@ -1,22 +1,33 @@
 package ui
 
 import (
-	"log"
 	"time"
 
 	"github.com/dcbishop/gim/service"
 	"github.com/nsf/termbox-go"
 )
 
-// UI handles input and displaying the app
+// UI handles input and displaying the app.
 type UI interface {
 	service.Service
+	Input
 }
 
-// TermboxUI handles ui using termbox-go
+// Input implementers provide a chanel that generates events.
+type Input interface {
+	Events() <-chan Event
+}
+
+// Event holds information about an event
+type Event struct {
+	Data interface{}
+}
+
+// TermboxUI handles ui using termbox-go.
 type TermboxUI struct {
-	quit  chan bool
-	state service.State
+	quit   chan bool
+	events chan Event
+	state  service.State
 }
 
 // Run enters the main UI loop untill Stop() is called.
@@ -48,8 +59,14 @@ func (tbw *TermboxUI) Stop() {
 	service.WaitUntilRunning(tbw, time.Second)
 }
 
+// Events gets the channel that emits events
+func (tbw *TermboxUI) Events() <-chan Event {
+	return tbw.events
+}
+
 func (tbw *TermboxUI) initialize() {
 	tbw.initializeQuitChannel()
+	tbw.initializeEventChannel()
 	termbox.Init()
 }
 
@@ -59,6 +76,10 @@ func (tbw *TermboxUI) cleanUp() {
 
 func (tbw *TermboxUI) initializeQuitChannel() {
 	tbw.quit = make(chan bool)
+}
+
+func (tbw *TermboxUI) initializeEventChannel() {
+	tbw.events = make(chan Event)
 }
 
 func (tbw *TermboxUI) handleEvents() {
@@ -75,7 +96,11 @@ loop:
 
 func (tbw *TermboxUI) handleEvent() {
 	event := termbox.PollEvent()
-	log.Println(event)
+	tbw.events <- termboxEventToInternal(event)
+}
+
+func termboxEventToInternal(event termbox.Event) Event {
+	return Event{event}
 }
 
 func (tbw *TermboxUI) waitForQuit() {

@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/dcbishop/fileaccessor"
@@ -144,10 +145,16 @@ loop:
 		select {
 		case <-app.quit:
 			break loop
+		case event := <-app.ui.Events():
+			app.handleEvent(event)
 		default:
 			app.Update()
 		}
 	}
+}
+
+func (app *App) handleEvent(event ui.Event) {
+	log.Println(event.Data)
 }
 
 // Update processes input and redraws the app.
