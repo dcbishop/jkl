@@ -10,7 +10,7 @@ type App struct {
 	fa            fileaccessor.FileAccessor
 	buffers       []Buffer
 	currentBuffer *Buffer
-	running       bool
+	quit          chan interface{}
 }
 
 // Buffer contains the text to edit
@@ -22,8 +22,7 @@ type Buffer struct {
 // New constructs a new app from the given options.
 func New(fa fileaccessor.FileAccessor) App {
 	app := App{
-		fa:      fa,
-		running: true,
+		fa: fa,
 	}
 	return app
 }
@@ -84,14 +83,36 @@ func (app *App) SetCurrentBuffer(buffer *Buffer) {
 
 // Run starts the main loop of the app. Will block until finished.
 func (app *App) Run() {
-	for app.Running() {
-		app.Update()
-	}
+	app.initialize()
+	app.loopUntilQuit()
 }
 
-// Running returns true if the app should be running
-func (app *App) Running() bool {
-	return app.running
+// Stop shuts everything down and terminates Run()
+func (app *App) Stop() {
+	if app.quit == nil {
+		return
+	}
+	close(app.quit)
+}
+
+func (app *App) initialize() {
+	app.initializeQuitChannel()
+}
+
+func (app *App) initializeQuitChannel() {
+	app.quit = make(chan interface{})
+}
+
+func (app *App) loopUntilQuit() {
+loop:
+	for {
+		select {
+		case <-app.quit:
+			break loop
+		default:
+			app.Update()
+		}
+	}
 }
 
 // Update processes input and redraws the app.
