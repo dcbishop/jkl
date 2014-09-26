@@ -2,6 +2,7 @@ package app
 
 import (
 	"testing"
+	"time"
 
 	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/gim/cli"
@@ -27,6 +28,21 @@ func TestNew(t *testing.T) {
 	Convey("app.New() returns basic App", t, func() {
 		app := fakeApp()
 		So(app, ShouldResemble, fakeApp())
+	})
+}
+
+func TestRunStop(t *testing.T) {
+	Convey("app.Run() should be terminated by an App.Stop() in a reasonable time", t, func() {
+		app := fakeApp()
+		time.AfterFunc(time.Second/5, func() {
+			panic("Failed to stop app.")
+		})
+		go app.Stop()
+		app.Run()
+	})
+	Convey("app.Stop() without having called app.Run() shouldn't explode", t, func() {
+		app := fakeApp()
+		app.Stop()
 	})
 }
 
