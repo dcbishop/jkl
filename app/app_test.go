@@ -6,6 +6,7 @@ import (
 
 	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/gim/cli"
+	"github.com/dcbishop/gim/service"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -32,17 +33,30 @@ func TestNew(t *testing.T) {
 }
 
 func TestRunStop(t *testing.T) {
-	Convey("app.Run() should be terminated by an App.Stop() in a reasonable time", t, func() {
+	Convey("given a new app", t, func() {
 		app := fakeApp()
-		time.AfterFunc(time.Second/5, func() {
-			panic("Failed to stop app.")
+		So(app.Running(), ShouldBeFalse)
+
+		Convey("app.Run() should start the app in a reasonable time", func() {
+			go app.Run()
+			So(service.WaitUntilRunning(&app, time.Second), ShouldBeNil)
+			So(app.Running(), ShouldBeTrue)
+
+			Convey("app.Stop() should terminate in a reasonable time", func() {
+				go app.Stop()
+				So(service.WaitUntilStopped(&app, time.Second), ShouldBeNil)
+				So(app.Running(), ShouldBeFalse)
+			})
+
+			Convey("app.Run() on a running app should panic", func() {
+				So(app.Run, ShouldPanic)
+			})
 		})
-		go app.Stop()
-		app.Run()
-	})
-	Convey("app.Stop() without having called app.Run() shouldn't explode", t, func() {
-		app := fakeApp()
-		app.Stop()
+
+		Convey("app.Stop() without having called app.Run() shouldn't explode", func() {
+			app.Stop()
+			So(app.Running(), ShouldBeFalse)
+		})
 	})
 }
 

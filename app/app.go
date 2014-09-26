@@ -1,8 +1,13 @@
 package app
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/gim/cli"
+	"github.com/dcbishop/gim/service"
+	"github.com/dcbishop/gim/ui"
 )
 
 // App is the main program.
@@ -11,6 +16,8 @@ type App struct {
 	buffers       []Buffer
 	currentBuffer *Buffer
 	quit          chan interface{}
+	ui            ui.UI
+	state         service.State
 }
 
 // Buffer contains the text to edit
@@ -83,24 +90,51 @@ func (app *App) SetCurrentBuffer(buffer *Buffer) {
 
 // Run starts the main loop of the app. Will block until finished.
 func (app *App) Run() {
+	if app.state.SetRunning() != nil {
+		panic("App already running.")
+	}
 	app.initialize()
+
+	go app.ui.Run()
+	defer app.ui.Stop()
+
 	app.loopUntilQuit()
+	app.state.SetStopped()
 }
 
-// Stop shuts everything down and terminates Run()
+// Stop shuts everything down and terminates Run(). Blocks untill clean shutdown.
 func (app *App) Stop() {
 	if app.quit == nil {
 		return
 	}
 	close(app.quit)
+
+	if service.WaitUntilStopped(app.ui, time.Second) != nil {
+		fmt.Println("UI service did not stop in under a second.")
+	}
+	if service.WaitUntilStopped(app, time.Second) != nil {
+		fmt.Println("App service did not stop in under a second.")
+	}
+}
+
+// Running returns true if Run() was called but Stop() hasn't been.
+func (app *App) Running() bool {
+	return app.state.Running()
 }
 
 func (app *App) initialize() {
 	app.initializeQuitChannel()
+	app.initializeUI()
 }
 
 func (app *App) initializeQuitChannel() {
 	app.quit = make(chan interface{})
+}
+
+func (app *App) initializeUI() {
+	if app.ui == nil {
+		app.ui = &ui.TermboxUI{}
+	}
 }
 
 func (app *App) loopUntilQuit() {
