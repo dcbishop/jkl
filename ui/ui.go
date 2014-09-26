@@ -3,7 +3,7 @@ package ui
 import (
 	"errors"
 	"log"
-	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/nsf/termbox-go"
@@ -38,9 +38,8 @@ type UI interface {
 
 // TermboxUI handles ui using termbox-go
 type TermboxUI struct {
-	quit         chan bool
-	running      bool
-	runningMutex sync.Mutex
+	quit    chan bool
+	running uint32
 }
 
 // Run enters the main UI loop untill Stop() is called.
@@ -59,22 +58,28 @@ func (tbw *TermboxUI) Run() {
 }
 
 func (tbw *TermboxUI) setRunning(state bool) (wasAlreadySet bool) {
-	tbw.runningMutex.Lock()
-	defer tbw.runningMutex.Unlock()
+	newNum := uint32(0)
 
-	if tbw.running == state {
+	if state {
+		newNum = 1
+	}
+
+	previousState := atomic.SwapUint32(&tbw.running, newNum)
+
+	if previousState == 0 && !state {
 		return true
 	}
 
-	tbw.running = state
+	if previousState == 1 && state {
+		return true
+	}
+
 	return false
 }
 
 // Running returns true if ui.Run() was called but ui.Stop() hasn't been.
 func (tbw *TermboxUI) Running() bool {
-	tbw.runningMutex.Lock()
-	defer tbw.runningMutex.Unlock()
-	return tbw.running
+	return tbw.running == 1
 }
 
 // Stop terminates the Run loop.
