@@ -1,25 +1,41 @@
-package service_test
+package service
 
 import (
 	"testing"
 
-	"github.com/dcbishop/gim/service"
-	"github.com/dcbishop/gim/ui"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+type FakeService struct {
+	state State
+}
+
+func (service *FakeService) Run() {
+	if service.state.SetRunning() != nil {
+		panic("Service already running")
+	}
+}
+
+func (service *FakeService) Stop() {
+	service.state.SetStopped()
+}
+
+func (service *FakeService) Running() bool {
+	return service.state.Running()
+}
+
 func TestWaitUntilRunning(t *testing.T) {
 	Convey("On a basic service", t, func() {
-		ui := ui.TermboxUI{}
-		So(ui.Running(), ShouldBeFalse)
+		service := FakeService{}
+		So(service.Running(), ShouldBeFalse)
 
 		Convey("Timeout should return error", func() {
-			err := service.WaitUntilRunning(&ui, 1)
+			err := WaitUntilRunning(&service, 1)
 			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Should proceed when running state is met", func() {
-			err := service.WaitUntilStopped(&ui, 1)
+			err := WaitUntilStopped(&service, 1)
 			So(err, ShouldBeNil)
 		})
 	})
@@ -27,9 +43,10 @@ func TestWaitUntilRunning(t *testing.T) {
 
 func TestSetRunning(t *testing.T) {
 	Convey("A blank state", t, func() {
-		var state service.State
+		var state State
+		So(state.Running(), ShouldBeFalse)
+
 		Convey("Setting running should work", func() {
-			So(state.Running(), ShouldBeFalse)
 			err := state.SetRunning()
 
 			So(state.Running(), ShouldBeTrue)
