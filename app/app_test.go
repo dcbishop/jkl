@@ -87,6 +87,34 @@ func TestOpenFile(t *testing.T) {
 	})
 }
 
+func TestRuneGrid(t *testing.T) {
+	Convey("New grid should be filled with NULL bytes", t, func() {
+		grid := NewRuneGrid(3, 3)
+		expected := [][]rune{
+			{0, 0, 0},
+			{0, 0, 0},
+			{0, 0, 0},
+		}
+		So(grid.cells, ShouldResemble, expected)
+	})
+	Convey("SetCell should set the correct cells and ignore invalid ones", t, func() {
+		grid := NewRuneGrid(3, 3)
+		expected := [][]rune{
+			{0, 'N', 0},
+			{'W', 'C', 'E'},
+			{0, 'S', 0},
+		}
+		grid.SetCell(1, 0, 'N')
+		grid.SetCell(1, 2, 'S')
+		grid.SetCell(2, 1, 'E')
+		grid.SetCell(0, 1, 'W')
+		grid.SetCell(1, 1, 'C')
+		grid.SetCell(100, 100, '!')
+
+		So(grid.cells, ShouldResemble, expected)
+	})
+}
+
 var renderTest = []byte(`123
 456
 789`)
