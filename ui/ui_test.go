@@ -4,21 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dcbishop/gim/service"
 	. "github.com/smartystreets/goconvey/convey"
 )
-
-func TestWaitUntilServiceRunning(t *testing.T) {
-	Convey("Timeout should return error", t, func() {
-		ui := TermboxUI{}
-		err := WaitUntilServiceRunning(&ui, true, 1)
-		So(err, ShouldNotBeNil)
-	})
-	Convey("Should proceed when running state is met", t, func() {
-		ui := TermboxUI{}
-		err := WaitUntilServiceRunning(&ui, false, 1)
-		So(err, ShouldBeNil)
-	})
-}
 
 func TestRunStop(t *testing.T) {
 	Convey("ui.Run() should be terminated by ui.Stop() and ui.Running() should give the correct status", t, func() {
@@ -26,14 +14,14 @@ func TestRunStop(t *testing.T) {
 
 		go ui.Run()
 
-		if WaitUntilServiceRunning(&ui, true, time.Second) != nil {
+		if service.WaitUntilRunning(&ui, time.Second) != nil {
 			panic("Failed to start UI.")
 		}
 		So(ui.Running(), ShouldBeTrue)
 
 		ui.Stop()
 
-		if WaitUntilServiceRunning(&ui, false, time.Second) != nil {
+		if service.WaitUntilStopped(&ui, time.Second) != nil {
 			panic("Failed to stop UI.")
 		}
 		So(ui.Running(), ShouldBeFalse)
@@ -56,7 +44,7 @@ func TestRunStop(t *testing.T) {
 		ui := TermboxUI{}
 		go ui.Run()
 
-		if WaitUntilServiceRunning(&ui, true, time.Second) != nil {
+		if service.WaitUntilRunning(&ui, time.Second) != nil {
 			panic("Failed to start UI.")
 		}
 
@@ -65,7 +53,7 @@ func TestRunStop(t *testing.T) {
 		So(ui.Running(), ShouldBeTrue)
 		ui.Stop()
 
-		if WaitUntilServiceRunning(&ui, false, time.Second) != nil {
+		if service.WaitUntilStopped(&ui, time.Second) != nil {
 			panic("Failed to start UI.")
 		}
 	})
