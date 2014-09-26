@@ -9,15 +9,19 @@ import (
 )
 
 func TestWaitUntilRunning(t *testing.T) {
-	Convey("Timeout should return error", t, func() {
+	Convey("On a basic service", t, func() {
 		ui := ui.TermboxUI{}
-		err := service.WaitUntilRunning(&ui, 1)
-		So(err, ShouldNotBeNil)
-	})
-	Convey("Should proceed when running state is met", t, func() {
-		ui := ui.TermboxUI{}
-		err := service.WaitUntilStopped(&ui, 1)
-		So(err, ShouldBeNil)
+		So(ui.Running(), ShouldBeFalse)
+
+		Convey("Timeout should return error", func() {
+			err := service.WaitUntilRunning(&ui, 1)
+			So(err, ShouldNotBeNil)
+		})
+
+		Convey("Should proceed when running state is met", func() {
+			err := service.WaitUntilStopped(&ui, 1)
+			So(err, ShouldBeNil)
+		})
 	})
 }
 
