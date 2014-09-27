@@ -40,7 +40,7 @@ func (tbw *TermboxUI) Stop() {
 		return
 	}
 	close(tbw.quit)
-	service.WaitUntilRunning(tbw, time.Second)
+	service.WaitUntilStopped(tbw, time.Second)
 }
 
 // Events gets the channel that emits events
