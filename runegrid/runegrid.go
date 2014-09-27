@@ -4,13 +4,13 @@ import "github.com/dcbishop/jkl/buffer"
 
 // RuneGrid contains the rendered text UI
 type RuneGrid struct {
-	width  uint
-	height uint
+	width  int
+	height int
 	cells  [][]rune
 }
 
 // New constructs a RuneGrid with the given width and height
-func New(width, height uint) RuneGrid {
+func New(width, height int) RuneGrid {
 	grid := RuneGrid{
 		width:  width,
 		height: height,
@@ -28,7 +28,7 @@ func New(width, height uint) RuneGrid {
 // wrap sets line wrapping on
 // linebrake sets soft wrapping
 func (grid *RuneGrid) RenderBuffer(
-	x, y, x2, y2 uint,
+	x, y, x2, y2 int,
 	buffer buffer.Buffer,
 	wrap,
 	linebrake,
@@ -54,7 +54,7 @@ func (grid *RuneGrid) RenderBuffer(
 }
 
 // SetCell sets a cell in the RuneGrid to the given rune
-func (grid *RuneGrid) SetCell(x, y uint, r rune) {
+func (grid *RuneGrid) SetCell(x, y int, r rune) {
 	if !grid.IsCellValid(x, y) {
 		return
 	}
@@ -63,7 +63,7 @@ func (grid *RuneGrid) SetCell(x, y uint, r rune) {
 }
 
 // IsCellValid returns true if the cell coordinates are valid
-func (grid *RuneGrid) IsCellValid(x, y uint) bool {
+func (grid *RuneGrid) IsCellValid(x, y int) bool {
 	if x >= grid.width || y >= grid.height {
 		return false
 	}
@@ -71,16 +71,73 @@ func (grid *RuneGrid) IsCellValid(x, y uint) bool {
 }
 
 // Width gets the width of the grid.
-func (grid *RuneGrid) Width() uint {
+func (grid *RuneGrid) Width() int {
 	return grid.width
 }
 
 // Height gets the height of the grid.
-func (grid *RuneGrid) Height() uint {
+func (grid *RuneGrid) Height() int {
 	return grid.height
 }
 
 // Cells gets the cells of the grid.
 func (grid *RuneGrid) Cells() [][]rune {
 	return grid.cells
+}
+
+// DrawBox a box with the given runes.
+func (grid *RuneGrid) DrawBox(x1, y1, x2, y2 int, r rune, rExtra ...rune) {
+	if len(rExtra) != 0 && len(rExtra) != 1 && len(rExtra) != 5 {
+		panic("rExtra must be 0, 1 or 5 arguments")
+	}
+
+	vertical := r
+	horizontal := r
+	topLeft := r
+	topRight := r
+	bottomLeft := r
+	bottomRight := r
+
+	var _ = vertical
+	var _ = horizontal
+	var _ = topLeft
+	var _ = topRight
+	var _ = bottomLeft
+	var _ = bottomRight
+
+	if len(rExtra) > 0 {
+		vertical = rExtra[0]
+	}
+
+	if len(rExtra) == 5 {
+		topLeft = rExtra[1]
+		topRight = rExtra[2]
+		bottomLeft = rExtra[3]
+		bottomRight = rExtra[4]
+	}
+
+	grid.DrawHorizontalLine(x1+1, x2-1, y1, horizontal)
+	grid.DrawHorizontalLine(x1+1, x2-1, y2, horizontal)
+	grid.DrawVerticalLine(x1, y1+1, y2-1, vertical)
+	grid.DrawVerticalLine(x2, y1+1, y2-1, vertical)
+
+	grid.SetCell(x1, y1, topLeft)
+	grid.SetCell(x2, y1, topRight)
+	grid.SetCell(x1, y2, bottomLeft)
+	grid.SetCell(x2, y2, bottomRight)
+
+}
+
+// DrawHorizontalLine draws a line with the given rune
+func (grid *RuneGrid) DrawHorizontalLine(x1, x2, y int, r rune) {
+	for x := x1; x <= x2; x++ {
+		grid.SetCell(x, y, r)
+	}
+}
+
+// DrawVerticalLine draws a vertical line
+func (grid *RuneGrid) DrawVerticalLine(x, y1, y2 int, r rune) {
+	for y := y1; y <= y2; y++ {
+		grid.SetCell(x, y, r)
+	}
 }

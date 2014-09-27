@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/dcbishop/jkl/editor"
+	"github.com/dcbishop/jkl/runegrid"
 	"github.com/dcbishop/jkl/service"
 	"github.com/nsf/termbox-go"
 )
@@ -50,7 +51,25 @@ func (tbw *TermboxUI) Events() <-chan Event {
 }
 
 // Redraw updates the display
-func (ui *TermboxUI) Redraw(editor editor.Editor) {
+func (tbw *TermboxUI) Redraw(editor editor.Editor) {
+	if !tbw.state.Running() {
+		return
+	}
+	width, height := termbox.Size()
+	// [TODO]: Cache runegrid and change on resize only - 2014-09-27 10:10pm
+	grid := runegrid.New(width, height)
+	grid.DrawBox(0, 0, width-1, height-1, '═', '║', '╔', '╗', '╚', '╝')
+	tbw.renderGrid(&grid)
+	termbox.SetCursor(1, 1)
+}
+
+func (tbw *TermboxUI) renderGrid(grid *runegrid.RuneGrid) {
+	for y, l := range grid.Cells() {
+		for x, r := range l {
+			termbox.SetCell(x, y, r, termbox.ColorWhite, termbox.ColorRed)
+		}
+	}
+	termbox.Flush()
 }
 
 func (tbw *TermboxUI) initialize() {
