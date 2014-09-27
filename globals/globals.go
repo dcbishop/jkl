@@ -7,7 +7,7 @@ import (
 
 // Name returns the name of the app
 func Name() string {
-	return "Gim"
+	return "Jkl"
 }
 
 // Executable returns the name of the executable that invoked the app

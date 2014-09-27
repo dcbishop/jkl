@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dcbishop/gim/globals"
+	"github.com/dcbishop/jkl/globals"
 	"github.com/docopt/docopt-go"
 )
 
@@ -51,7 +51,7 @@ func parseWithDocopt(args []string) (Options, error) {
 	return options, nil
 }
 
-// Returns the name and version (ie "Gim 0.1")
+// Returns the name and version (ie "Jkl 0.1")
 func nameVersion() string {
 	return globals.Name() + " " + globals.VersionString()
 }

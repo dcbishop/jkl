@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/dcbishop/fileaccessor"
-	"github.com/dcbishop/gim/cli"
-	"github.com/dcbishop/gim/service"
+	"github.com/dcbishop/jkl/cli"
+	"github.com/dcbishop/jkl/service"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -70,7 +70,7 @@ func TestLoadOptions(t *testing.T) {
 		So(app, ShouldResemble, fakeApp())
 	})
 	Convey("with 2 filenames given", t, func() {
-		options, err := cli.ParseArgs([]string{"gim", "fakefile.txt", "fakefile2.txt"})
+		options, err := cli.ParseArgs([]string{"jkl", "fakefile.txt", "fakefile2.txt"})
 		So(err, ShouldBeNil)
 
 		app.LoadOptions(options)

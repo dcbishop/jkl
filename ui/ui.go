@@ -1,6 +1,6 @@
 package ui
 
-import "github.com/dcbishop/gim/service"
+import "github.com/dcbishop/jkl/service"
 
 // UI handles input and displaying the app.
 type UI interface {

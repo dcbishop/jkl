@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/dcbishop/fileaccessor"
-	"github.com/dcbishop/gim/cli"
-	"github.com/dcbishop/gim/service"
-	"github.com/dcbishop/gim/ui"
+	"github.com/dcbishop/jkl/cli"
+	"github.com/dcbishop/jkl/service"
+	"github.com/dcbishop/jkl/ui"
 )
 
 // App is the main program.

@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/dcbishop/fileaccessor"
-	"github.com/dcbishop/gim/app"
-	"github.com/dcbishop/gim/cli"
+	"github.com/dcbishop/jkl/app"
+	"github.com/dcbishop/jkl/cli"
 )
 
 func main() {

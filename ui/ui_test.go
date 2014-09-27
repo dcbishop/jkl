@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dcbishop/gim/service"
+	"github.com/dcbishop/jkl/service"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
