@@ -3,6 +3,7 @@ package ui
 import (
 	"time"
 
+	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
 	"github.com/nsf/termbox-go"
 )
@@ -46,6 +47,10 @@ func (tbw *TermboxUI) Stop() {
 // Events gets the channel that emits events
 func (tbw *TermboxUI) Events() <-chan Event {
 	return tbw.events
+}
+
+// Redraw updates the display
+func (ui *TermboxUI) Redraw(editor editor.Editor) {
 }
 
 func (tbw *TermboxUI) initialize() {

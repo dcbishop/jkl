@@ -5,7 +5,9 @@ import (
 	"time"
 
 	"github.com/dcbishop/fileaccessor"
+	"github.com/dcbishop/jkl/buffer"
 	"github.com/dcbishop/jkl/cli"
+	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/ui"
 	"github.com/nsf/termbox-go"
@@ -13,81 +15,24 @@ import (
 
 // App is the main program.
 type App struct {
-	fa            fileaccessor.FileAccessor
-	buffers       []Buffer
-	currentBuffer *Buffer
-	quit          chan interface{}
-	UI            ui.UI
-	state         service.State
-}
-
-// Buffer contains the text to edit
-type Buffer struct {
-	filename string
-	data     []byte
+	quit   chan interface{}
+	UI     ui.UI
+	state  service.State
+	editor editor.Editor
 }
 
 // New constructs a new app from the given options.
 func New(fa fileaccessor.FileAccessor) App {
+	editor := editor.New(fa)
 	app := App{
-		fa: fa,
+		editor: &editor,
 	}
 	return app
 }
 
 // LoadOptions loads the given options.
 func (app *App) LoadOptions(options cli.Options) {
-	app.OpenFiles(options.FilesToOpen)
-}
-
-// OpenFiles opens a list of files into buffers and sets the current buffer to the first of the new buffers.
-func (app *App) OpenFiles(filenames []string) {
-	for i, filename := range filenames {
-		buffer := app.openFile(filename)
-		bufferPtr := app.AddBuffer(buffer)
-
-		if i == 0 {
-			app.SetCurrentBuffer(bufferPtr)
-		}
-	}
-}
-
-// openFile reads a file, loads it into a new buffer and adds it to the list of buffers
-func (app *App) openFile(filename string) Buffer {
-	buffer := NewBuffer()
-
-	buffer.filename = filename
-
-	if data, err := app.fa.ReadFile(filename); err == nil {
-		buffer.data = data
-	} else {
-		// [TODO]: Error handling. Non-existant files shouldn't cause a problem,
-		// but ones that do exist but can't open should show an error.
-		buffer.data = []byte{}
-	}
-
-	return buffer
-}
-
-// OpenFile opens a file and sets it to the current buffer.
-func (app *App) OpenFile(filename string) {
-	app.OpenFiles([]string{filename})
-}
-
-// AddBuffer adds a buffer to the list of buffers
-func (app *App) AddBuffer(buffer Buffer) *Buffer {
-	app.buffers = append(app.buffers, buffer)
-	return app.LastBuffer()
-}
-
-// LastBuffer returns a pointer to the last buffer in the list of buffers
-func (app *App) LastBuffer() *Buffer {
-	return &app.buffers[len(app.buffers)-1]
-}
-
-// SetCurrentBuffer sets the currently visible buffer
-func (app *App) SetCurrentBuffer(buffer *Buffer) {
-	app.currentBuffer = buffer
+	app.editor.OpenFiles(options.FilesToOpen)
 }
 
 // Run starts the main loop of the app. Will block until finished.
@@ -177,11 +122,7 @@ func (app *App) handleTermboxKeyEvent(event termbox.Event) {
 
 // Update processes input and redraws the app.
 func (app *App) Update() {
-}
-
-// NewBuffer constructs a new Buffer object containing data.
-func NewBuffer() Buffer {
-	return Buffer{}
+	app.UI.Redraw(app.editor)
 }
 
 // RuneGrid contains the rendered text UI
@@ -211,7 +152,7 @@ func NewRuneGrid(width, height uint) RuneGrid {
 // linebrake sets soft wrapping
 func (grid *RuneGrid) RenderBuffer(
 	x, y, x2, y2 uint,
-	buffer *Buffer,
+	buffer buffer.Buffer,
 	wrap,
 	linebrake,
 	breakindent bool,
@@ -222,7 +163,7 @@ func (grid *RuneGrid) RenderBuffer(
 	xPos := x
 	yPos := y
 
-	for _, r := range buffer.data {
+	for _, r := range buffer.Data() {
 		if r == '\n' {
 			yPos++
 			xPos = x

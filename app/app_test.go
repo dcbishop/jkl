@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dcbishop/fileaccessor"
+	"github.com/dcbishop/jkl/buffer"
 	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/service"
 	. "github.com/smartystreets/goconvey/convey"
@@ -74,30 +75,7 @@ func TestLoadOptions(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		app.LoadOptions(options)
-		So(len(app.buffers), ShouldEqual, 2)
-	})
-}
-
-func TestOpenFile(t *testing.T) {
-	Convey("app.OpenFile", t, func() {
-		app := fakeApp()
-		Convey("with a valid filename, loads file into buffer", func() {
-			So(len(app.buffers), ShouldEqual, 0)
-
-			app.OpenFile(fakeFileName)
-
-			So(len(app.buffers), ShouldEqual, 1)
-			So(app.buffers[0].data, ShouldResemble, fakeFileContents)
-			So(app.buffers[0].filename, ShouldResemble, fakeFileName)
-		})
-
-		Convey("with nonexistant file, opens a blank buffer with that filename", func() {
-			So(len(app.buffers), ShouldEqual, 0)
-			app.OpenFile("file2.txt")
-			So(len(app.buffers), ShouldEqual, 1)
-			So(app.buffers[0].data, ShouldResemble, []byte{})
-			So(app.buffers[0].filename, ShouldResemble, "file2.txt")
-		})
+		So(len(app.editor.Buffers()), ShouldEqual, 2)
 	})
 }
 
@@ -135,59 +113,56 @@ var renderTest = []byte(`123
 
 func TestRenderBuffer(t *testing.T) {
 	Convey("Basic Buffer", t, func() {
-		buffer := NewBuffer()
-		buffer.data = renderTest
-		grid := NewRuneGrid(3, 3)
-		expected := [][]rune{
-			{'1', '2', '3'},
-			{'4', '5', '6'},
-			{'7', '8', '9'},
-		}
+		buffer := buffer.New()
+		buffer.SetData(renderTest)
+		Convey("3x3 RuneGrid", func() {
+			grid := NewRuneGrid(3, 3)
+			So(grid.width, ShouldEqual, 3)
+			So(grid.height, ShouldEqual, 3)
+			Convey("Basic Render", func() {
+				expected := [][]rune{
+					{'1', '2', '3'},
+					{'4', '5', '6'},
+					{'7', '8', '9'},
+				}
 
-		grid.RenderBuffer(0, 0, 3, 3, &buffer, false, false, false, "")
+				grid.RenderBuffer(0, 0, 3, 3, &buffer, false, false, false, "")
 
-		So(grid.cells, ShouldResemble, expected)
-	})
-	Convey("offset buffer", t, func() {
-		buffer := NewBuffer()
-		buffer.data = renderTest
-		grid := NewRuneGrid(3, 3)
-		expected := [][]rune{
-			{0, 0, 0},
-			{0, '1', '2'},
-			{0, '4', '5'},
-		}
+				So(grid.cells, ShouldResemble, expected)
+			})
+			Convey("offset buffer", func() {
+				expected := [][]rune{
+					{0, 0, 0},
+					{0, '1', '2'},
+					{0, '4', '5'},
+				}
 
-		grid.RenderBuffer(1, 1, 2, 2, &buffer, false, false, false, "")
+				grid.RenderBuffer(1, 1, 2, 2, &buffer, false, false, false, "")
 
-		So(grid.cells, ShouldResemble, expected)
-	})
-	Convey("partially visible buffer", t, func() {
-		buffer := NewBuffer()
-		buffer.data = renderTest
-		grid := NewRuneGrid(3, 3)
-		expected := [][]rune{
-			{0, 0, 0},
-			{0, '1', 0},
-			{0, 0, 0},
-		}
+				So(grid.cells, ShouldResemble, expected)
+			})
+			Convey("partially visible buffer", func() {
+				expected := [][]rune{
+					{0, 0, 0},
+					{0, '1', 0},
+					{0, 0, 0},
+				}
 
-		grid.RenderBuffer(1, 1, 1, 1, &buffer, false, false, false, "")
+				grid.RenderBuffer(1, 1, 1, 1, &buffer, false, false, false, "")
 
-		So(grid.cells, ShouldResemble, expected)
-	})
-	Convey("larger partially visible buffer", t, func() {
-		buffer := NewBuffer()
-		buffer.data = renderTest
-		grid := NewRuneGrid(3, 3)
-		expected := [][]rune{
-			{'1', '2', 0},
-			{'4', '5', 0},
-			{0, 0, 0},
-		}
+				So(grid.cells, ShouldResemble, expected)
+			})
+			Convey("larger partially visible buffer", func() {
+				expected := [][]rune{
+					{'1', '2', 0},
+					{'4', '5', 0},
+					{0, 0, 0},
+				}
 
-		grid.RenderBuffer(0, 0, 1, 1, &buffer, false, false, false, "")
+				grid.RenderBuffer(0, 0, 1, 1, &buffer, false, false, false, "")
 
-		So(grid.cells, ShouldResemble, expected)
+				So(grid.cells, ShouldResemble, expected)
+			})
+		})
 	})
 }

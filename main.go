@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/app"
@@ -13,6 +14,7 @@ func main() {
 	options := processArguments()
 	app := app.New(fileaccessor.LocalStorage{})
 	app.LoadOptions(options)
+	time.AfterFunc(time.Second, app.Stop)
 	app.Run()
 }
 
