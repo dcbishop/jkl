@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/ui"
+	"github.com/nsf/termbox-go"
 )
 
 // App is the main program.
@@ -17,7 +17,7 @@ type App struct {
 	buffers       []Buffer
 	currentBuffer *Buffer
 	quit          chan interface{}
-	ui            ui.UI
+	UI            ui.UI
 	state         service.State
 }
 
@@ -97,8 +97,8 @@ func (app *App) Run() {
 	}
 	app.initialize()
 
-	go app.ui.Run()
-	defer app.ui.Stop()
+	go app.UI.Run()
+	defer app.UI.Stop()
 
 	app.loopUntilQuit()
 	app.state.SetStopped()
@@ -109,13 +109,14 @@ func (app *App) Stop() {
 	if app.quit == nil {
 		return
 	}
+
 	close(app.quit)
 
-	if service.WaitUntilStopped(app.ui, time.Second) != nil {
-		fmt.Println("UI service did not stop in under a second.")
+	if service.WaitUntilStopped(app.UI, time.Second) != nil {
+		log.Println("UI service did not stop in under a second.")
 	}
 	if service.WaitUntilStopped(app, time.Second) != nil {
-		fmt.Println("App service did not stop in under a second.")
+		log.Println("App service did not stop in under a second.")
 	}
 }
 
@@ -134,8 +135,8 @@ func (app *App) initializeQuitChannel() {
 }
 
 func (app *App) initializeUI() {
-	if app.ui == nil {
-		app.ui = &ui.TermboxUI{}
+	if app.UI == nil {
+		app.UI = &ui.TermboxUI{}
 	}
 }
 
@@ -145,7 +146,7 @@ loop:
 		select {
 		case <-app.quit:
 			break loop
-		case event := <-app.ui.Events():
+		case event := <-app.UI.Events():
 			app.handleEvent(event)
 		default:
 			app.Update()
@@ -154,7 +155,24 @@ loop:
 }
 
 func (app *App) handleEvent(event ui.Event) {
-	log.Println(event.Data)
+	// [TODO]: Convert all Events to an interal format in the UI layer rather than using termbox directly. - 2014-09-27 11:27am
+	switch data := event.Data.(type) {
+	case termbox.Event:
+		app.handleTermboxEvent(data)
+	}
+}
+
+func (app *App) handleTermboxEvent(event termbox.Event) {
+	switch event.Type {
+	case termbox.EventKey:
+		app.handleTermboxKeyEvent(event)
+	}
+}
+
+func (app *App) handleTermboxKeyEvent(event termbox.Event) {
+	if event.Ch == 'q' {
+		go app.Stop()
+	}
 }
 
 // Update processes input and redraws the app.
