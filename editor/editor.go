@@ -11,6 +11,7 @@ type Editor interface {
 	OpenFile(filename string)
 	AddBuffer(buffer buffer.Buffer) buffer.Buffer
 	LastBuffer() buffer.Buffer
+	CurrentBuffer() buffer.Buffer
 	SetCurrentBuffer(buffer buffer.Buffer)
 	Buffers() []buffer.Buffer
 }
@@ -70,7 +71,12 @@ func (editor *Jkl) LastBuffer() buffer.Buffer {
 	return editor.buffers[len(editor.buffers)-1]
 }
 
-// SetCurrentBuffer sets the currently visible buffer
+// CurrentBuffer returns the current buffer.
+func (editor *Jkl) CurrentBuffer() buffer.Buffer {
+	return editor.currentBuffer
+}
+
+// SetCurrentBuffer sets the currently visible buffer.
 func (editor *Jkl) SetCurrentBuffer(buffer buffer.Buffer) {
 	editor.currentBuffer = buffer
 }
