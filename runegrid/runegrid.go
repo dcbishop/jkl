@@ -41,9 +41,18 @@ func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
 	x2--
 	y2--
 
-	if editor.CurrentBuffer() != nil {
-		grid.RenderBuffer(x1, y1, x2, y2, editor.CurrentBuffer(), false, false, false, "")
+	if editor.CurrentPane() == nil {
+		return
 	}
+	grid.RenderPane(editor.CurrentPane(), x1, y1, x2, y2)
+}
+
+// RenderPane render the Pane and it's contents
+func (grid *RuneGrid) RenderPane(pane *editor.Pane, x1, y1, x2, y2 int) {
+	if pane.Buffer() == nil {
+		return
+	}
+	grid.RenderBuffer(x1, y1, x2, y2, pane.Buffer(), false, false, false, "")
 }
 
 // RenderBuffer blits the buffer onto the grid.

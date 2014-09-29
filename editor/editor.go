@@ -5,27 +5,44 @@ import (
 	"github.com/dcbishop/jkl/buffer"
 )
 
+// Pane represents a 'Window' in the editor. It has a Buffer.
+type Pane struct {
+	buffer buffer.Buffer
+}
+
+// Buffer returns the Buffer of the Pane
+func (pane *Pane) Buffer() buffer.Buffer {
+	return pane.buffer
+}
+
+// SetBuffer binds a Buffer to the Pane
+func (pane *Pane) SetBuffer(buffer buffer.Buffer) {
+	pane.buffer = buffer
+}
+
 // Editor contains buffers and performs actions on them.
 type Editor interface {
 	OpenFiles(filenames []string)
 	OpenFile(filename string)
 	AddBuffer(buffer buffer.Buffer) buffer.Buffer
-	LastBuffer() buffer.Buffer
-	CurrentBuffer() buffer.Buffer
-	SetCurrentBuffer(buffer buffer.Buffer)
+	CurrentPane() *Pane
+	SetCurrentPane(pane *Pane)
 	Buffers() []buffer.Buffer
+	LastBuffer() buffer.Buffer
+	Panes() []*Pane
 }
 
 // Jkl is the standard implementation of Editor
 type Jkl struct {
-	buffers       []buffer.Buffer
-	currentBuffer buffer.Buffer
-	fa            fileaccessor.FileAccessor
+	fa          fileaccessor.FileAccessor
+	currentPane *Pane
+	buffers     []buffer.Buffer
+	panes       []*Pane
 }
 
 // New constructs a new editor
 func New(fileaccessor fileaccessor.FileAccessor) Jkl {
-	return Jkl{fa: fileaccessor}
+	return Jkl{fa: fileaccessor, currentPane: &Pane{}}
 }
 
 // OpenFiles opens a list of files into buffers and sets the current buffer to the first of the new buffers.
@@ -35,7 +52,7 @@ func (editor *Jkl) OpenFiles(filenames []string) {
 		buffer = editor.AddBuffer(buffer)
 
 		if i == 0 {
-			editor.SetCurrentBuffer(buffer)
+			editor.CurrentPane().SetBuffer(buffer)
 		}
 	}
 }
@@ -71,17 +88,22 @@ func (editor *Jkl) LastBuffer() buffer.Buffer {
 	return editor.buffers[len(editor.buffers)-1]
 }
 
-// CurrentBuffer returns the current buffer.
-func (editor *Jkl) CurrentBuffer() buffer.Buffer {
-	return editor.currentBuffer
+// CurrentPane returns the current pane.
+func (editor *Jkl) CurrentPane() *Pane {
+	return editor.currentPane
 }
 
-// SetCurrentBuffer sets the currently visible buffer.
-func (editor *Jkl) SetCurrentBuffer(buffer buffer.Buffer) {
-	editor.currentBuffer = buffer
+// SetCurrentPane sets the currently visible pane.
+func (editor *Jkl) SetCurrentPane(pane *Pane) {
+	editor.currentPane = pane
 }
 
 // Buffers returns a slice containing the buffers.
 func (editor *Jkl) Buffers() []buffer.Buffer {
 	return editor.buffers
+}
+
+// Panes returns a slice containing the panes.
+func (editor *Jkl) Panes() []*Pane {
+	return editor.panes
 }

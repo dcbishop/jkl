@@ -3,7 +3,9 @@ package runegrid
 import (
 	"testing"
 
+	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/buffer"
+	"github.com/dcbishop/jkl/editor"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -42,6 +44,15 @@ func TestRuneGrid(t *testing.T) {
 			}
 			So(grid.cells, ShouldResemble, expected)
 		})
+	})
+}
+
+func TestRenderEditor(t *testing.T) {
+	Convey("Basic Editor", t, func() {
+		fa := fileaccessor.Virtual{}
+		editor := editor.New(fa)
+		grid := New(3, 3)
+		grid.RenderEditor(&editor)
 	})
 }
 
