@@ -37,7 +37,7 @@ func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
 	grid.DrawBox(x1, y1, x2, y2, '═', '║', '╔', '╗', '╚', '╝')
 
 	x1++
-	y2++
+	y1++
 	x2--
 	y2--
 
@@ -59,7 +59,7 @@ func (grid *RuneGrid) RenderPane(pane *editor.Pane, x1, y1, x2, y2 int) {
 // wrap sets line wrapping on
 // linebrake sets soft wrapping
 func (grid *RuneGrid) RenderBuffer(
-	x, y, x2, y2 int,
+	x1, y1, x2, y2 int,
 	buffer buffer.Buffer,
 	wrap,
 	linebrake,
@@ -68,13 +68,13 @@ func (grid *RuneGrid) RenderBuffer(
 	// [TODO]: Should line numbering be done here?
 	// Otherwise how do we communicate the line numbers out. - 2014-09-24 11:50pm
 ) {
-	xPos := x
-	yPos := y
+	xPos := x1
+	yPos := y1
 
 	for _, r := range buffer.Data() {
 		if r == '\n' {
 			yPos++
-			xPos = x
+			xPos = x1
 			continue
 		}
 		if xPos <= x2 && yPos <= y2 {
