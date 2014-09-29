@@ -1,6 +1,9 @@
 package runegrid
 
-import "github.com/dcbishop/jkl/buffer"
+import (
+	"github.com/dcbishop/jkl/buffer"
+	"github.com/dcbishop/jkl/editor"
+)
 
 // RuneGrid contains the rendered text UI
 type RuneGrid struct {
@@ -22,6 +25,25 @@ func New(width, height int) RuneGrid {
 	}
 
 	return grid
+}
+
+// RenderEditor renders the entire editor window to the grid.
+func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
+	x1 := 0
+	y1 := 0
+	x2 := grid.width - 1
+	y2 := grid.height - 1
+
+	grid.DrawBox(x1, y1, x2, y2, '═', '║', '╔', '╗', '╚', '╝')
+
+	x1++
+	y2++
+	x2--
+	y2--
+
+	if editor.CurrentBuffer() != nil {
+		grid.RenderBuffer(x1, y1, x2, y2, editor.CurrentBuffer(), false, false, false, "")
+	}
 }
 
 // RenderBuffer blits the buffer onto the grid.

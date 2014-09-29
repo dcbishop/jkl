@@ -57,12 +57,9 @@ func (tbw *TermboxUI) Redraw(editor editor.Editor) {
 	}
 	width, height := termbox.Size()
 	// [TODO]: Cache runegrid and change on resize only - 2014-09-27 10:10pm
-	grid := runegrid.New(width, height)
-	grid.DrawBox(0, 0, width-1, height-1, '═', '║', '╔', '╗', '╚', '╝')
 
-	if editor.CurrentBuffer() != nil {
-		grid.RenderBuffer(1, 1, width-2, height-2, editor.CurrentBuffer(), false, false, false, "")
-	}
+	grid := runegrid.New(width, height)
+	grid.RenderEditor(editor)
 
 	tbw.renderGrid(&grid)
 	termbox.SetCursor(1, 1)
