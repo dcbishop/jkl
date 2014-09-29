@@ -8,30 +8,40 @@ import (
 )
 
 func TestRuneGrid(t *testing.T) {
-	Convey("New grid should be filled with NULL bytes", t, func() {
+	Convey("New 3x3 grid should be filled with NULL bytes", t, func() {
 		grid := New(3, 3)
 		expected := [][]rune{
 			{0, 0, 0},
 			{0, 0, 0},
 			{0, 0, 0},
 		}
-		So(grid.cells, ShouldResemble, expected)
-	})
-	Convey("SetCell should set the correct cells and ignore invalid ones", t, func() {
-		grid := New(3, 3)
-		expected := [][]rune{
-			{0, 'N', 0},
-			{'W', 'C', 'E'},
-			{0, 'S', 0},
-		}
-		grid.SetCell(1, 0, 'N')
-		grid.SetCell(1, 2, 'S')
-		grid.SetCell(2, 1, 'E')
-		grid.SetCell(0, 1, 'W')
-		grid.SetCell(1, 1, 'C')
-		grid.SetCell(100, 100, '!')
 
 		So(grid.cells, ShouldResemble, expected)
+		Convey("SetCell should set the correct cells and ignore invalid ones", func() {
+			grid := New(3, 3)
+			expected := [][]rune{
+				{0, 'N', 0},
+				{'W', 'C', 'E'},
+				{0, 'S', 0},
+			}
+			grid.SetCell(1, 0, 'N')
+			grid.SetCell(1, 2, 'S')
+			grid.SetCell(2, 1, 'E')
+			grid.SetCell(0, 1, 'W')
+			grid.SetCell(1, 1, 'C')
+			grid.SetCell(100, 100, '!')
+
+			So(grid.cells, ShouldResemble, expected)
+		})
+		Convey("Basic DrawBox()", func() {
+			grid.DrawBox(0, 0, 2, 2, '#')
+			expected := [][]rune{
+				{'#', '#', '#'},
+				{'#', 0, '#'},
+				{'#', '#', '#'},
+			}
+			So(grid.cells, ShouldResemble, expected)
+		})
 	})
 }
 
