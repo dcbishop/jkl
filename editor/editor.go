@@ -5,6 +5,20 @@ import (
 	"github.com/dcbishop/jkl/buffer"
 )
 
+// Settings stores settings for the editor
+type Settings struct {
+	Borders     bool
+	OuterBorder bool
+}
+
+// DefaultSettings constructs a default settings.
+func DefaultSettings() Settings {
+	return Settings{
+		Borders:     true,
+		OuterBorder: true,
+	}
+}
+
 // Pane represents a 'Window' in the editor. It has a Buffer.
 type Pane struct {
 	buffer buffer.Buffer
@@ -30,6 +44,7 @@ type Editor interface {
 	Buffers() []buffer.Buffer
 	LastBuffer() buffer.Buffer
 	Panes() []*Pane
+	Settings() *Settings
 }
 
 // Jkl is the standard implementation of Editor
@@ -38,11 +53,21 @@ type Jkl struct {
 	currentPane *Pane
 	buffers     []buffer.Buffer
 	panes       []*Pane
+	settings    Settings
 }
 
 // New constructs a new editor
 func New(fileaccessor fileaccessor.FileAccessor) Jkl {
-	return Jkl{fa: fileaccessor, currentPane: &Pane{}}
+	return Jkl{
+		fa:          fileaccessor,
+		currentPane: &Pane{},
+		settings:    DefaultSettings(),
+	}
+}
+
+// Settings returns the settings
+func (editor *Jkl) Settings() *Settings {
+	return &editor.settings
 }
 
 // OpenFiles opens a list of files into buffers and sets the current buffer to the first of the new buffers.

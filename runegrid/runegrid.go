@@ -34,16 +34,21 @@ func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
 	x2 := grid.width - 1
 	y2 := grid.height - 1
 
-	grid.DrawBox(x1, y1, x2, y2, '═', '║', '╔', '╗', '╚', '╝')
+	settings := editor.Settings()
 
-	x1++
-	y1++
-	x2--
-	y2--
+	if settings.Borders && settings.OuterBorder {
+		grid.DrawBox(x1, y1, x2, y2, '═', '║', '╔', '╗', '╚', '╝')
+
+		x1++
+		y1++
+		x2--
+		y2--
+	}
 
 	if editor.CurrentPane() == nil {
 		return
 	}
+
 	grid.RenderPane(editor.CurrentPane(), x1, y1, x2, y2)
 }
 
