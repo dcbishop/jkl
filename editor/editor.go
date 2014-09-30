@@ -26,17 +26,28 @@ type Cursor struct {
 	buffer buffer.Buffer
 }
 
-// MoveDownLine moves the cursors position one line down.
-func (cursor *Cursor) MoveDownLine() {
-	cursor.line++
+// Position reutrns the cursors current position.
+func (cursor *Cursor) Position() (xPos int, lineNumber int) {
+	return cursor.x, cursor.line
 }
 
-// MoveUpLine moves the cursors position one line down.
-func (cursor *Cursor) MoveUpLine() {
-	cursor.line--
-	if cursor.line < 0 {
-		cursor.line = 0
+// Move repositions the cursor at the given coordinates.
+func (cursor *Cursor) Move(xPos int, lineNumber int) {
+	cursor.x = xPos
+	cursor.line = lineNumber
+}
+
+// DownLine returns the cursors position one line down.
+func (cursor *Cursor) DownLine() (xPos int, lineNumber int) {
+	return cursor.x, cursor.line + 1
+}
+
+// UpLine returns the cursors position one line down.
+func (cursor *Cursor) UpLine() (xPos int, lineNumber int) {
+	if cursor.line == 0 {
+		return cursor.Position()
 	}
+	return cursor.x, cursor.line - 1
 }
 
 // XPos returns the number of characters into the line.

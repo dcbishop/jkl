@@ -117,11 +117,14 @@ func (app *App) handleTermboxKeyEvent(event termbox.Event) {
 	if event.Ch == 'q' {
 		go app.Stop()
 	}
+
+	cursor := app.editor.CurrentPane().Cursor()
+
 	if event.Ch == 'j' {
-		app.editor.CurrentPane().Cursor().MoveDownLine()
+		cursor.Move(cursor.DownLine())
 	}
 	if event.Ch == 'k' {
-		app.editor.CurrentPane().Cursor().MoveUpLine()
+		cursor.Move(cursor.UpLine())
 	}
 }
 
