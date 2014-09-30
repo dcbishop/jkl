@@ -62,7 +62,20 @@ func (tbw *TermboxUI) Redraw(editor editor.Editor) {
 	grid.RenderEditor(editor)
 
 	tbw.renderGrid(&grid)
-	termbox.SetCursor(1, 1)
+
+	if editor.CurrentPane().Cursor() == nil {
+		return
+	}
+
+	xPos := editor.CurrentPane().Cursor().XPos()
+	yPos := editor.CurrentPane().Cursor().LineNumber()
+
+	if editor.Settings().Borders && editor.Settings().OuterBorder {
+		xPos++
+		yPos++
+	}
+
+	termbox.SetCursor(xPos, yPos)
 }
 
 func (tbw *TermboxUI) renderGrid(grid *runegrid.RuneGrid) {

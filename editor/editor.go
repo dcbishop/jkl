@@ -19,9 +19,55 @@ func DefaultSettings() Settings {
 	}
 }
 
+// Cursor stores a position in a buffer and handles movement.
+type Cursor struct {
+	x      int
+	line   int
+	buffer buffer.Buffer
+}
+
+// MoveDownLine moves the cursors position one line down.
+func (cursor *Cursor) MoveDownLine() {
+	cursor.line++
+}
+
+// MoveUpLine moves the cursors position one line down.
+func (cursor *Cursor) MoveUpLine() {
+	cursor.line--
+	if cursor.line < 0 {
+		cursor.line = 0
+	}
+}
+
+// XPos returns the number of characters into the line.
+// It might be greator than the number of characters on the line in the case
+// when it was previosly on a longer line then moved to a shorter one.
+func (cursor *Cursor) XPos() int {
+	return cursor.x
+}
+
+// LineNumber returns the line the cursor is on.
+func (cursor *Cursor) LineNumber() int {
+	return cursor.line
+}
+
 // Pane represents a 'Window' in the editor. It has a Buffer.
 type Pane struct {
-	buffer buffer.Buffer
+	buffer  buffer.Buffer
+	cursors map[buffer.Buffer]*Cursor
+}
+
+// NewPane constructs and initilizes a NewPane
+func NewPane() Pane {
+	return Pane{
+		buffer:  nil,
+		cursors: make(map[buffer.Buffer]*Cursor),
+	}
+}
+
+// Cursor returns the Cursor into the Panes current buffer.
+func (pane *Pane) Cursor() *Cursor {
+	return pane.cursors[pane.Buffer()]
 }
 
 // Buffer returns the Buffer of the Pane
@@ -29,9 +75,12 @@ func (pane *Pane) Buffer() buffer.Buffer {
 	return pane.buffer
 }
 
-// SetBuffer binds a Buffer to the Pane
+// SetBuffer binds a Buffer to the Pane and creates a Cursor if needed.
 func (pane *Pane) SetBuffer(buffer buffer.Buffer) {
 	pane.buffer = buffer
+	if pane.Cursor() == nil {
+		pane.cursors[pane.buffer] = &Cursor{buffer: pane.buffer}
+	}
 }
 
 // Editor contains buffers and performs actions on them.
@@ -58,9 +107,10 @@ type Jkl struct {
 
 // New constructs a new editor
 func New(fileaccessor fileaccessor.FileAccessor) Jkl {
+	pane := NewPane()
 	return Jkl{
 		fa:          fileaccessor,
-		currentPane: &Pane{},
+		currentPane: &pane,
 		settings:    DefaultSettings(),
 	}
 }

@@ -117,6 +117,12 @@ func (app *App) handleTermboxKeyEvent(event termbox.Event) {
 	if event.Ch == 'q' {
 		go app.Stop()
 	}
+	if event.Ch == 'j' {
+		app.editor.CurrentPane().Cursor().MoveDownLine()
+	}
+	if event.Ch == 'k' {
+		app.editor.CurrentPane().Cursor().MoveUpLine()
+	}
 }
 
 // Update processes input and redraws the app.
