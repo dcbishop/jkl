@@ -27,7 +27,7 @@ type ConsoleDriver interface {
 type TerminalUI struct {
 	quit    chan bool
 	state   service.State
-	console ConsoleDriver
+	Console ConsoleDriver
 }
 
 // Run enters the main UI loop untill Stop() is called.
@@ -59,7 +59,7 @@ func (tui *TerminalUI) Stop() {
 
 // Events gets the channel that emits events
 func (tui *TerminalUI) Events() <-chan Event {
-	return tui.console.Events()
+	return tui.Console.Events()
 }
 
 // Redraw updates the display
@@ -67,11 +67,10 @@ func (tui *TerminalUI) Redraw(editor editor.Editor) {
 	if !tui.state.Running() {
 		return
 	}
-	width, height := tui.console.Size()
+	defer tui.Console.AfterDraw()
+
 	// [TODO]: Cache runegrid and change on resize only - 2014-09-27 10:10pm
-
-	defer tui.console.AfterDraw()
-
+	width, height := tui.Console.Size()
 	grid := runegrid.New(width, height)
 	grid.RenderEditor(editor)
 
@@ -89,13 +88,13 @@ func (tui *TerminalUI) Redraw(editor editor.Editor) {
 		yPos++
 	}
 
-	tui.console.SetCursor(xPos, yPos)
+	tui.Console.SetCursor(xPos, yPos)
 }
 
 func (tui *TerminalUI) renderGrid(grid *runegrid.RuneGrid) {
 	for y, l := range grid.Cells() {
 		for x, r := range l {
-			tui.console.SetCell(x, y, r, termbox.ColorWhite, termbox.ColorRed)
+			tui.Console.SetCell(x, y, r, termbox.ColorWhite, termbox.ColorRed)
 		}
 	}
 }
@@ -103,16 +102,16 @@ func (tui *TerminalUI) renderGrid(grid *runegrid.RuneGrid) {
 func (tui *TerminalUI) initialize() {
 	tui.initializeConsoleDriver()
 	tui.initializeQuitChannel()
-	tui.console.Init()
+	tui.Console.Init()
 }
 
 func (tui *TerminalUI) cleanUp() {
-	tui.console.Close()
+	tui.Console.Close()
 }
 
 func (tui *TerminalUI) initializeConsoleDriver() {
-	if tui.console == nil {
-		tui.console = &TermboxDriver{}
+	if tui.Console == nil {
+		tui.Console = &TermboxDriver{}
 	}
 }
 

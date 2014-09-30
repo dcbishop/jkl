@@ -18,6 +18,7 @@ func TestFakeUI(t *testing.T) {
 func TestTermbox(t *testing.T) {
 	Convey("A new TerminalUI should be in a stopped state", t, func() {
 		ui := TerminalUI{}
+		ui.Console = &FakeDriver{}
 		testUI(&ui)
 	})
 }

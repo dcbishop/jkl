@@ -7,6 +7,7 @@ import (
 	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/service"
+	"github.com/dcbishop/jkl/ui"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -22,7 +23,11 @@ var fakeFileSystem = map[string][]byte{
 var fakeFileAccessor = fileaccessor.Virtual{fakeFileSystem}
 
 func fakeApp() App {
-	return New(fakeFileAccessor)
+	app := New(fakeFileAccessor)
+	tui := &ui.TerminalUI{}
+	tui.Console = &ui.FakeDriver{}
+	app.UI = tui
+	return app
 }
 
 func TestNew(t *testing.T) {
@@ -61,7 +66,7 @@ func TestRunStop(t *testing.T) {
 }
 
 func TestLoadOptions(t *testing.T) {
-	app := New(fakeFileAccessor)
+	app := fakeApp()
 	Convey("with default Options doesn't change App", t, func() {
 		options := cli.Options{}
 
