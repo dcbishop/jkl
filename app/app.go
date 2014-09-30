@@ -126,6 +126,12 @@ func (app *App) handleTermboxKeyEvent(event termbox.Event) {
 	if event.Ch == 'k' {
 		cursor.Move(cursor.UpLine())
 	}
+	if event.Ch == 'h' {
+		cursor.Move(cursor.BackCharacter())
+	}
+	if event.Ch == 'l' {
+		cursor.Move(cursor.ForwardCharacter())
+	}
 }
 
 // Update processes input and redraws the app.

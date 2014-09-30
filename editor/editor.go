@@ -42,12 +42,25 @@ func (cursor *Cursor) DownLine() (xPos int, lineNumber int) {
 	return cursor.x, cursor.line + 1
 }
 
-// UpLine returns the cursors position one line down.
+// UpLine returns the cursors position one line up.
 func (cursor *Cursor) UpLine() (xPos int, lineNumber int) {
 	if cursor.line == 0 {
 		return cursor.Position()
 	}
 	return cursor.x, cursor.line - 1
+}
+
+// BackCharacter returns the cursors position one character back.
+func (cursor *Cursor) BackCharacter() (xPos int, lineNumber int) {
+	if cursor.x == 0 {
+		return cursor.Position()
+	}
+	return cursor.x - 1, cursor.line
+}
+
+// ForwardCharacter returns the cursors position one character forward.
+func (cursor *Cursor) ForwardCharacter() (xPos int, lineNumber int) {
+	return cursor.x + 1, cursor.line
 }
 
 // XPos returns the number of characters into the line.
