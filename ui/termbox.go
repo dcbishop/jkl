@@ -1,134 +1,83 @@
 package ui
 
-import (
-	"time"
+import "github.com/nsf/termbox-go"
 
-	"github.com/dcbishop/jkl/editor"
-	"github.com/dcbishop/jkl/runegrid"
-	"github.com/dcbishop/jkl/service"
-	"github.com/nsf/termbox-go"
-)
-
-// TermboxUI handles ui using termbox-go.
-type TermboxUI struct {
-	quit   chan bool
+// TermboxDriver is a ConsoleDriver that uses termbox-go.
+type TermboxDriver struct {
 	events chan Event
-	state  service.State
+	quit   chan interface{}
 }
 
-// Run enters the main UI loop untill Stop() is called.
-func (tbw *TermboxUI) Run() {
-	if tbw.state.SetRunning() != nil {
-		panic("UI already running.")
-		return
-	}
-	defer tbw.state.SetStopped()
-
-	tbw.initialize()
-
-	go tbw.handleEvents()
-	tbw.waitForQuit()
-	tbw.cleanUp()
+// Size returns the current size of the terminal from Termbox.
+func (tbd *TermboxDriver) Size() (width int, height int) {
+	return termbox.Size()
 }
 
-// Running returns true if ui.Run() was called but ui.Stop() hasn't been.
-func (tbw *TermboxUI) Running() bool {
-	return tbw.state.Running()
-}
-
-// Stop terminates the Run loop.
-func (tbw *TermboxUI) Stop() {
-	if tbw.quit == nil {
-		return
-	}
-	close(tbw.quit)
-	service.WaitUntilStopped(tbw, time.Second)
-}
-
-// Events gets the channel that emits events
-func (tbw *TermboxUI) Events() <-chan Event {
-	return tbw.events
-}
-
-// Redraw updates the display
-func (tbw *TermboxUI) Redraw(editor editor.Editor) {
-	if !tbw.state.Running() {
-		return
-	}
-	width, height := termbox.Size()
-	// [TODO]: Cache runegrid and change on resize only - 2014-09-27 10:10pm
-
-	grid := runegrid.New(width, height)
-	grid.RenderEditor(editor)
-
-	tbw.renderGrid(&grid)
-
-	if editor.CurrentPane().Cursor() == nil {
-		return
-	}
-
-	xPos := editor.CurrentPane().Cursor().XPos()
-	yPos := editor.CurrentPane().Cursor().LineNumber()
-
-	if editor.Settings().Borders && editor.Settings().OuterBorder {
-		xPos++
-		yPos++
-	}
-
-	termbox.SetCursor(xPos, yPos)
-}
-
-func (tbw *TermboxUI) renderGrid(grid *runegrid.RuneGrid) {
-	for y, l := range grid.Cells() {
-		for x, r := range l {
-			termbox.SetCell(x, y, r, termbox.ColorWhite, termbox.ColorRed)
-		}
-	}
-	termbox.Flush()
-}
-
-func (tbw *TermboxUI) initialize() {
-	tbw.initializeQuitChannel()
-	tbw.initializeEventChannel()
+// Init initilizes the Termbox library.
+func (tbd *TermboxDriver) Init() {
+	tbd.events = make(chan Event)
+	tbd.quit = make(chan interface{})
 	termbox.Init()
+	go tbd.handleEvents()
 }
 
-func (tbw *TermboxUI) cleanUp() {
+// Close closes the Termbox library.
+// [TODO]: If this is called on one instance of multiple TermboxDriver
+// instances then they all die... Need a refrence count,
+// the entire TermboxDriver  should be a singleton - 2014-09-30 02:25pm
+func (tbd *TermboxDriver) Close() {
+	close(tbd.quit)
 	termbox.Close()
 }
 
-func (tbw *TermboxUI) initializeQuitChannel() {
-	tbw.quit = make(chan bool)
+// SetCell sets a character in the console
+func (tbd *TermboxDriver) SetCell(x, y int, r rune, fg, bg Color) {
+	termbox.SetCell(x, y, r, colorToAttribute(fg), colorToAttribute(bg))
 }
 
-func (tbw *TermboxUI) initializeEventChannel() {
-	tbw.events = make(chan Event)
+// SetCursor sets the Termbox cursor position
+func (tbd *TermboxDriver) SetCursor(x, y int) {
+	termbox.SetCursor(x, y)
 }
 
-func (tbw *TermboxUI) handleEvents() {
+// Events returns a channel of events
+func (tbd *TermboxDriver) Events() chan Event {
+	return tbd.events
+}
+
+// AfterDraw executes a Termbox Flush
+func (tbd *TermboxDriver) AfterDraw() {
+	termbox.Flush()
+}
+
+func colorToAttribute(color Color) termbox.Attribute {
+	return color.(termbox.Attribute)
+}
+
+func (tbd *TermboxDriver) handleEvents() {
 loop:
 	for {
 		select {
-		case <-tbw.quit:
+		case <-tbd.quit:
 			break loop
 		default:
-			tbw.handleEvent()
+			tbd.handleEvent()
 		}
 	}
 }
 
-func (tbw *TermboxUI) handleEvent() {
+func (tbd *TermboxDriver) handleEvent() {
 	event := termbox.PollEvent()
-	tbw.events <- termboxEventToInternal(event)
+	tbd.events <- termboxEventToInternal(event)
 }
 
 func termboxEventToInternal(event termbox.Event) Event {
 	return Event{event}
 }
 
-func (tbw *TermboxUI) waitForQuit() {
+func (tui *TerminalUI) waitForQuit() {
 	select {
-	case <-tbw.quit:
+	case <-tui.quit:
 		return
 	}
 }

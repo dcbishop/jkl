@@ -44,6 +44,9 @@ func (app *App) Run() {
 	go app.UI.Run()
 	defer app.UI.Stop()
 
+	if service.WaitUntilRunning(app.UI, time.Second) != nil {
+		panic("Could not start UI service.")
+	}
 	app.loopUntilQuit()
 	app.state.SetStopped()
 }
@@ -80,7 +83,7 @@ func (app *App) initializeQuitChannel() {
 
 func (app *App) initializeUI() {
 	if app.UI == nil {
-		app.UI = &ui.TermboxUI{}
+		app.UI = &ui.TerminalUI{}
 	}
 }
 
@@ -119,6 +122,9 @@ func (app *App) handleTermboxKeyEvent(event termbox.Event) {
 	}
 
 	cursor := app.editor.CurrentPane().Cursor()
+	if cursor == nil {
+		return
+	}
 
 	if event.Ch == 'j' {
 		cursor.Move(cursor.DownLine())

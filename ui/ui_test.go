@@ -16,8 +16,8 @@ func TestFakeUI(t *testing.T) {
 }
 
 func TestTermbox(t *testing.T) {
-	Convey("A new TermboxUI should be in a stopped state", t, func() {
-		ui := TermboxUI{}
+	Convey("A new TerminalUI should be in a stopped state", t, func() {
+		ui := TerminalUI{}
 		testUI(&ui)
 	})
 }
