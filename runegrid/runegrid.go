@@ -3,6 +3,7 @@ package runegrid
 import (
 	"github.com/dcbishop/jkl/buffer"
 	"github.com/dcbishop/jkl/editor"
+	"github.com/dcbishop/jkl/testhelpers"
 )
 
 // RuneGrid contains the rendered text UI
@@ -176,4 +177,17 @@ func (grid *RuneGrid) DrawVerticalLine(x, y1, y2 int, r rune) {
 	for y := y1; y <= y2; y++ {
 		grid.SetCell(x, y, r)
 	}
+}
+
+// StringToRuneGrid converts ASCII art to a RuneGrid for testing.
+func StringToRuneGrid(s string, replaceWithNul rune) RuneGrid {
+	cells := testhelpers.StringToRunes(s, replaceWithNul)
+	height := len(cells)
+	if height == 1 {
+		return New(0, 0)
+	}
+	width := len(cells[0])
+	grid := New(width, height)
+	grid.cells = cells
+	return grid
 }
