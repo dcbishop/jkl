@@ -80,8 +80,7 @@ func (tui *TerminalUI) Redraw(editor editor.Editor) {
 		return
 	}
 
-	xPos := editor.CurrentPane().Cursor().XPos()
-	yPos := editor.CurrentPane().Cursor().LineNumber()
+	xPos, yPos := editor.CurrentPane().Cursor().Position()
 
 	if editor.Settings().Borders && editor.Settings().OuterBorder {
 		xPos++

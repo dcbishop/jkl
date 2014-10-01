@@ -63,18 +63,6 @@ func (cursor *Cursor) ForwardCharacter() (xPos int, lineNumber int) {
 	return cursor.x + 1, cursor.line
 }
 
-// XPos returns the number of characters into the line.
-// It might be greator than the number of characters on the line in the case
-// when it was previosly on a longer line then moved to a shorter one.
-func (cursor *Cursor) XPos() int {
-	return cursor.x
-}
-
-// LineNumber returns the line the cursor is on.
-func (cursor *Cursor) LineNumber() int {
-	return cursor.line
-}
-
 // Pane represents a 'Window' in the editor. It has a Buffer.
 type Pane struct {
 	buffer  buffer.Buffer
