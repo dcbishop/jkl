@@ -30,7 +30,7 @@ This is line 2.
 This is line 3.`)
 
 func TestGetLine(t *testing.T) {
-	Convey("OnTestBuffer", t, func() {
+	Convey("Test multiline Buffer", t, func() {
 		buffer := New()
 		buffer.SetData(testData)
 
@@ -59,5 +59,36 @@ func TestGetLine(t *testing.T) {
 			So(line, ShouldResemble, "")
 			So(err, ShouldNotBeNil)
 		})
+	})
+
+	Convey("Test line feed terminated Buffer", t, func() {
+		// "Test" with single line feed
+		data := []byte{84, 101, 115, 116, 10}
+
+		Convey("get first line", func() {
+			buffer := New()
+			buffer.SetData(data)
+			line, err := buffer.GetLine(1)
+			So(line, ShouldResemble, "Test")
+			So(err, ShouldBeNil)
+		})
+
+		Convey("get missing 2nd line", func() {
+			buffer := New()
+			buffer.SetData(data)
+			line, err := buffer.GetLine(2)
+			So(line, ShouldResemble, "")
+			So(err, ShouldNotBeNil)
+		})
+	})
+
+	Convey("Test double line feed terminated Buffer", t, func() {
+		// "Test" with double line feed
+		data := []byte{84, 101, 115, 116, 10, 10}
+		buffer := New()
+		buffer.SetData(data)
+		line, err := buffer.GetLine(2)
+		So(line, ShouldResemble, "")
+		So(err, ShouldBeNil)
 	})
 }
