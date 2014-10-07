@@ -80,14 +80,14 @@ func (tui *TerminalUI) Redraw(editor editor.Editor) {
 		return
 	}
 
-	xPos, yPos := editor.CurrentPane().Cursor().Position()
+	xPos, linePos := editor.CurrentPane().Cursor().Position()
 
 	if editor.Settings().Borders && editor.Settings().OuterBorder {
 		xPos++
-		yPos++
+		linePos++
 	}
 
-	tui.Console.SetCursor(xPos, yPos)
+	tui.Console.SetCursor(xPos, linePos-1)
 }
 
 func (tui *TerminalUI) renderGrid(grid *runegrid.RuneGrid) {

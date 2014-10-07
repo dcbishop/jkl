@@ -55,24 +55,24 @@ func TestCursor(t *testing.T) {
 		x, line := cursor.Position()
 
 		So(x, ShouldEqual, 0)
-		So(line, ShouldEqual, 0)
+		So(line, ShouldEqual, 1)
 		So(cursor.buffer, ShouldEqual, &buffer)
 
 		Convey("DownLine", func() {
 			x, line := cursor.DownLine()
 			So(x, ShouldEqual, 0)
-			So(line, ShouldEqual, 1)
+			So(line, ShouldEqual, 2)
 
 			Convey("Move DownLine", func() {
 				cursor.Move(cursor.DownLine())
 				x, line := cursor.Position()
 				So(x, ShouldEqual, 0)
-				So(line, ShouldEqual, 1)
+				So(line, ShouldEqual, 2)
 
 				Convey("UpLine", func() {
 					x, line := cursor.UpLine()
 					So(x, ShouldEqual, 0)
-					So(line, ShouldEqual, 0)
+					So(line, ShouldEqual, 1)
 				})
 			})
 
@@ -81,7 +81,7 @@ func TestCursor(t *testing.T) {
 		Convey("UpLine when at top", func() {
 			x, line := cursor.UpLine()
 			So(x, ShouldEqual, 0)
-			So(line, ShouldEqual, 0)
+			So(line, ShouldEqual, 1)
 		})
 
 		Convey("ForwardCharacter should move forward one character", func() {
@@ -99,6 +99,19 @@ func TestCursor(t *testing.T) {
 		Convey("BackCharacter when at first character shouldn't move", func() {
 			x, _ := cursor.BackCharacter()
 			So(x, ShouldEqual, 0)
+		})
+
+		Convey("Move to EndOfLine", func() {
+			cursor.Move(cursor.EndOfLine())
+			x, line := cursor.Position()
+			So(x, ShouldEqual, 12)
+			So(line, ShouldEqual, 1)
+
+			Convey("BeginningOfLine", func() {
+				x, line := cursor.BeginningOfLine()
+				So(x, ShouldEqual, 0)
+				So(line, ShouldEqual, 1)
+			})
 		})
 	})
 }

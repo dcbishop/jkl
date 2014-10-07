@@ -28,18 +28,22 @@ type Cursor struct {
 
 // Position reutrns the cursors current position.
 func (cursor *Cursor) Position() (xPos int, lineNumber int) {
-	return cursor.x, cursor.line
+	return cursor.x, cursor.line + 1
 }
 
 // Move repositions the cursor at the given coordinates.
 func (cursor *Cursor) Move(xPos int, lineNumber int) {
 	cursor.x = xPos
-	cursor.line = lineNumber
+	cursor.line = lineNumber - 1
 }
 
 // DownLine returns the cursors position one line down.
 func (cursor *Cursor) DownLine() (xPos int, lineNumber int) {
-	return cursor.x, cursor.line + 1
+	_, err := cursor.buffer.GetLine(cursor.line + 2)
+	if err != nil {
+		return cursor.Position()
+	}
+	return cursor.x, cursor.line + 2
 }
 
 // UpLine returns the cursors position one line up.
@@ -47,7 +51,7 @@ func (cursor *Cursor) UpLine() (xPos int, lineNumber int) {
 	if cursor.line == 0 {
 		return cursor.Position()
 	}
-	return cursor.x, cursor.line - 1
+	return cursor.x, cursor.line
 }
 
 // BackCharacter returns the cursors position one character back.
@@ -55,12 +59,27 @@ func (cursor *Cursor) BackCharacter() (xPos int, lineNumber int) {
 	if cursor.x == 0 {
 		return cursor.Position()
 	}
-	return cursor.x - 1, cursor.line
+	return cursor.x - 1, cursor.line + 1
 }
 
 // ForwardCharacter returns the cursors position one character forward.
 func (cursor *Cursor) ForwardCharacter() (xPos int, lineNumber int) {
-	return cursor.x + 1, cursor.line
+	line, _ := cursor.buffer.GetLine(cursor.line + 1)
+	if len(line)-1 < cursor.x {
+		return cursor.Position()
+	}
+	return cursor.x + 1, cursor.line + 1
+}
+
+// BeginningOfLine returns the cursors position at the beginning of the line
+func (cursor *Cursor) BeginningOfLine() (xPos int, lineNumber int) {
+	return 0, cursor.line + 1
+}
+
+// EndOfLine returns the cursors position at the end of the line
+func (cursor *Cursor) EndOfLine() (xPos int, lineNumber int) {
+	line, _ := cursor.buffer.GetLine(cursor.line + 1)
+	return len(line) - 1, cursor.line + 1
 }
 
 // Pane represents a 'Window' in the editor. It has a Buffer.
