@@ -54,5 +54,10 @@ func TestGetLine(t *testing.T) {
 			So(line, ShouldResemble, "")
 			So(err, ShouldNotBeNil)
 		})
+		Convey("get -1 line", func() {
+			line, err := buffer.GetLine(-1)
+			So(line, ShouldResemble, "")
+			So(err, ShouldNotBeNil)
+		})
 	})
 }

@@ -47,17 +47,15 @@ func (buffer *Bytes) SetData(data []byte) {
 
 // GetLine returns the requested line as a string.
 func (buffer *Bytes) GetLine(lineNum int) (string, error) {
+	if lineNum < 0 {
+		return "", errors.New("Not found")
+	}
+
 	line := 1
 	pos := 0
 	for {
 		if line == lineNum {
-			endOfLine := bytesUntillNextNewline(buffer.data[pos:])
-			if endOfLine == -1 {
-				endOfLine = len(buffer.data)
-			} else {
-				endOfLine += pos
-			}
-			return string(buffer.data[pos:endOfLine]), nil
+			return untillNewLineOrEnd(buffer.data, pos), nil
 		}
 
 		nextLine := bytesUntillNextNewline(buffer.data[pos:]) + 1
@@ -68,6 +66,16 @@ func (buffer *Bytes) GetLine(lineNum int) (string, error) {
 		pos += nextLine
 		line++
 	}
+}
+
+func untillNewLineOrEnd(data []byte, pos int) string {
+	endOfLine := bytesUntillNextNewline(data[pos:])
+	if endOfLine == -1 {
+		endOfLine = len(data)
+	} else {
+		endOfLine += pos
+	}
+	return string(data[pos:endOfLine])
 }
 
 func bytesUntillNextNewline(data []byte) int {
