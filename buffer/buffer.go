@@ -1,11 +1,17 @@
 package buffer
 
+import (
+	"bytes"
+	"errors"
+)
+
 // Buffer contains the text to edit.
 type Buffer interface {
 	Filename() string
 	SetFilename(filename string)
 	Data() []byte
 	SetData(data []byte)
+	GetLine(lineNum int) (string, error)
 }
 
 // Bytes is a simple implenetation of the buffer that stores data in a []byte.
@@ -37,4 +43,33 @@ func (buffer *Bytes) Data() []byte {
 // SetData sets the data of the buffer.
 func (buffer *Bytes) SetData(data []byte) {
 	buffer.data = data
+}
+
+// GetLine returns the requested line as a string.
+func (buffer *Bytes) GetLine(lineNum int) (string, error) {
+	line := 1
+	pos := 0
+	for {
+		if line == lineNum {
+			endOfLine := bytesUntillNextNewline(buffer.data[pos:])
+			if endOfLine == -1 {
+				endOfLine = len(buffer.data)
+			} else {
+				endOfLine += pos
+			}
+			return string(buffer.data[pos:endOfLine]), nil
+		}
+
+		nextLine := bytesUntillNextNewline(buffer.data[pos:]) + 1
+		if nextLine == 0 {
+			return "", errors.New("Not found")
+		}
+
+		pos += nextLine
+		line++
+	}
+}
+
+func bytesUntillNextNewline(data []byte) int {
+	return bytes.IndexByte(data, '\n')
 }

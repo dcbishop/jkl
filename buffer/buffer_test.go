@@ -24,3 +24,35 @@ func TestBuffer(t *testing.T) {
 		})
 	})
 }
+
+var testData = []byte(`This is line 1.
+This is line 2.
+This is line 3.`)
+
+func TestGetLine(t *testing.T) {
+	Convey("OnTestBuffer", t, func() {
+		buffer := New()
+		buffer.SetData(testData)
+
+		Convey("get first line", func() {
+			line, err := buffer.GetLine(1)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, "This is line 1.")
+		})
+		Convey("get second line", func() {
+			line, err := buffer.GetLine(2)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, "This is line 2.")
+		})
+		Convey("get third line", func() {
+			line, err := buffer.GetLine(3)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, "This is line 3.")
+		})
+		Convey("get missing forth line", func() {
+			line, err := buffer.GetLine(4)
+			So(line, ShouldResemble, "")
+			So(err, ShouldNotBeNil)
+		})
+	})
+}
