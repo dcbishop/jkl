@@ -74,10 +74,3 @@ func (tbd *TermboxDriver) handleEvent() {
 func termboxEventToInternal(event termbox.Event) Event {
 	return Event{event}
 }
-
-func (tui *TerminalUI) waitForQuit() {
-	select {
-	case <-tui.quit:
-		return
-	}
-}

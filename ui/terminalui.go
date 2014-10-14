@@ -117,3 +117,10 @@ func (tui *TerminalUI) initializeConsoleDriver() {
 func (tui *TerminalUI) initializeQuitChannel() {
 	tui.quit = make(chan bool)
 }
+
+func (tui *TerminalUI) waitForQuit() {
+	select {
+	case <-tui.quit:
+		return
+	}
+}
