@@ -137,7 +137,8 @@ func TestRenderBuffer(t *testing.T) {
 			Convey("Basic Render", func() {
 				expected := StringToRuneGrid(OneToNine, '.')
 
-				grid.RenderBuffer(0, 0, 3, 3, &buffer, false, false, false, "")
+				settings := editor.DefaultSettings()
+				grid.RenderBuffer(&settings, 0, 0, 3, 3, &buffer)
 
 				So(grid, ShouldResemble, expected)
 			})
@@ -150,7 +151,8 @@ func TestRenderBuffer(t *testing.T) {
 				`
 				expected := StringToRuneGrid(offsetBuffer, '.')
 
-				grid.RenderBuffer(1, 1, 2, 2, &buffer, false, false, false, "")
+				settings := editor.DefaultSettings()
+				grid.RenderBuffer(&settings, 1, 1, 2, 2, &buffer)
 
 				So(grid, ShouldResemble, expected)
 			})
@@ -163,7 +165,8 @@ func TestRenderBuffer(t *testing.T) {
 				`
 				expected := StringToRuneGrid(partiallyVisible, '.')
 
-				grid.RenderBuffer(1, 1, 1, 1, &buffer, false, false, false, "")
+				settings := editor.DefaultSettings()
+				grid.RenderBuffer(&settings, 1, 1, 1, 1, &buffer)
 
 				So(grid, ShouldResemble, expected)
 			})
@@ -176,10 +179,27 @@ func TestRenderBuffer(t *testing.T) {
 				`
 				expected := StringToRuneGrid(partiallyVisible, '.')
 
-				grid.RenderBuffer(0, 0, 1, 1, &buffer, false, false, false, "")
+				settings := editor.DefaultSettings()
+				grid.RenderBuffer(&settings, 0, 0, 1, 1, &buffer)
 
 				So(grid, ShouldResemble, expected)
 			})
 		})
+	})
+
+	Convey("Tabs should render as 4 spaces by default", t, func() {
+		buffer := buffer.New()
+		buffer.SetData([]byte("{\n\tint a;\n}"))
+		tabTest := `
+{..........
+    int a;.
+}..........
+...........
+`
+		grid := New(11, 4)
+		expected := StringToRuneGrid(tabTest, '.')
+		settings := editor.DefaultSettings()
+		grid.RenderBuffer(&settings, 0, 0, 11, 4, &buffer)
+		So(grid, ShouldResemble, expected)
 	})
 }

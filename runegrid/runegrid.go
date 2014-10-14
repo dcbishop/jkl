@@ -50,29 +50,24 @@ func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
 		return
 	}
 
-	grid.RenderPane(editor.CurrentPane(), x1, y1, x2, y2)
+	grid.RenderPane(editor, editor.CurrentPane(), x1, y1, x2, y2)
 }
 
 // RenderPane render the Pane and it's contents
-func (grid *RuneGrid) RenderPane(pane *editor.Pane, x1, y1, x2, y2 int) {
+func (grid *RuneGrid) RenderPane(editor editor.Editor, pane *editor.Pane, x1, y1, x2, y2 int) {
 	if pane.Buffer() == nil {
 		return
 	}
-	grid.RenderBuffer(x1, y1, x2, y2, pane.Buffer(), false, false, false, "")
+	grid.RenderBuffer(editor.Settings(), x1, y1, x2, y2, pane.Buffer())
 }
 
 // RenderBuffer blits the buffer onto the grid.
 // wrap sets line wrapping on
 // linebrake sets soft wrapping
 func (grid *RuneGrid) RenderBuffer(
+	settings *editor.Settings,
 	x1, y1, x2, y2 int,
 	buffer buffer.Buffer,
-	wrap,
-	linebrake,
-	breakindent bool,
-	showbreak string,
-	// [TODO]: Should line numbering be done here?
-	// Otherwise how do we communicate the line numbers out. - 2014-09-24 11:50pm
 ) {
 	xPos := x1
 	yPos := y1
@@ -84,9 +79,17 @@ func (grid *RuneGrid) RenderBuffer(
 			continue
 		}
 		if xPos <= x2 && yPos <= y2 {
-			grid.SetCell(xPos, yPos, rune(r))
+			if r == '\t' {
+				for i := 0; i < settings.ShiftWidth; i++ {
+					grid.SetCell(xPos, yPos, ' ')
+					xPos++
+				}
+			} else {
+				grid.SetCell(xPos, yPos, rune(r))
+				xPos++
+			}
+
 		}
-		xPos++
 	}
 }
 

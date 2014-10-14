@@ -9,6 +9,7 @@ import (
 type Settings struct {
 	Borders     bool
 	OuterBorder bool
+	ShiftWidth  int
 }
 
 // DefaultSettings constructs a default settings.
@@ -16,6 +17,7 @@ func DefaultSettings() Settings {
 	return Settings{
 		Borders:     true,
 		OuterBorder: true,
+		ShiftWidth:  4,
 	}
 }
 
