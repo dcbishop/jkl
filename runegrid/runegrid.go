@@ -50,11 +50,11 @@ func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
 		return
 	}
 
-	grid.RenderPane(editor, editor.CurrentPane(), x1, y1, x2, y2)
+	grid.RenderPane(editor, x1, y1, x2, y2, editor.CurrentPane())
 }
 
 // RenderPane render the Pane and it's contents
-func (grid *RuneGrid) RenderPane(editor editor.Editor, pane *editor.Pane, x1, y1, x2, y2 int) {
+func (grid *RuneGrid) RenderPane(editor editor.Editor, x1, y1, x2, y2 int, pane *editor.Pane) {
 	if pane.Buffer() == nil {
 		return
 	}
