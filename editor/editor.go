@@ -6,18 +6,24 @@ import (
 )
 
 // Settings stores settings for the editor
+// Borders draws pretty borders around panes but takes up some screen space.
+// OuterBorder when false turns off just the outer border.
+// ShiftWidth is the number of spaces each tab will be displayed as.
+// ScrollOffset is the minimum number of lines that will be visible above or below the cursor.
 type Settings struct {
-	Borders     bool
-	OuterBorder bool
-	ShiftWidth  int
+	Borders      bool
+	OuterBorder  bool
+	ShiftWidth   int
+	ScrollOffset int
 }
 
 // DefaultSettings constructs a default settings.
 func DefaultSettings() Settings {
 	return Settings{
-		Borders:     true,
-		OuterBorder: true,
-		ShiftWidth:  4,
+		Borders:      true,
+		OuterBorder:  true,
+		ShiftWidth:   4,
+		ScrollOffset: 0,
 	}
 }
 
@@ -88,6 +94,7 @@ func (cursor *Cursor) EndOfLine() (xPos int, lineNumber int) {
 type Pane struct {
 	buffer  buffer.Buffer
 	cursors map[buffer.Buffer]*Cursor
+	topLine int
 }
 
 // NewPane constructs and initilizes a NewPane
@@ -95,6 +102,7 @@ func NewPane() Pane {
 	return Pane{
 		buffer:  nil,
 		cursors: make(map[buffer.Buffer]*Cursor),
+		topLine: 1,
 	}
 }
 
@@ -114,6 +122,16 @@ func (pane *Pane) SetBuffer(buffer buffer.Buffer) {
 	if pane.Cursor() == nil {
 		pane.cursors[pane.buffer] = &Cursor{buffer: pane.buffer}
 	}
+}
+
+// TopLine returns the line number of the first line visible at the top of the Pane.
+func (pane *Pane) TopLine() int {
+	return pane.topLine
+}
+
+// SetTopLine sets the line number of the first line visiable at the top of the Pane.
+func (pane *Pane) SetTopLine(topLine int) {
+	pane.topLine = topLine
 }
 
 // Editor contains buffers and performs actions on them.

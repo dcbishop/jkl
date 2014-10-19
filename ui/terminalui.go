@@ -81,6 +81,7 @@ func (tui *TerminalUI) Redraw(editor editor.Editor) {
 	}
 
 	xPos, linePos := editor.CurrentPane().Cursor().Position()
+	linePos = linePos - editor.CurrentPane().TopLine() + 1
 
 	if editor.Settings().Borders && editor.Settings().OuterBorder {
 		xPos++

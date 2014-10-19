@@ -138,7 +138,7 @@ func TestRenderBuffer(t *testing.T) {
 				expected := StringToRuneGrid(OneToNine, '.')
 
 				settings := editor.DefaultSettings()
-				grid.RenderBuffer(&settings, 0, 0, 3, 3, &buffer)
+				grid.RenderBuffer(&settings, 0, 0, 3, 3, &buffer, 0)
 
 				So(grid, ShouldResemble, expected)
 			})
@@ -152,7 +152,7 @@ func TestRenderBuffer(t *testing.T) {
 				expected := StringToRuneGrid(offsetBuffer, '.')
 
 				settings := editor.DefaultSettings()
-				grid.RenderBuffer(&settings, 1, 1, 2, 2, &buffer)
+				grid.RenderBuffer(&settings, 1, 1, 2, 2, &buffer, 1)
 
 				So(grid, ShouldResemble, expected)
 			})
@@ -166,7 +166,7 @@ func TestRenderBuffer(t *testing.T) {
 				expected := StringToRuneGrid(partiallyVisible, '.')
 
 				settings := editor.DefaultSettings()
-				grid.RenderBuffer(&settings, 1, 1, 1, 1, &buffer)
+				grid.RenderBuffer(&settings, 1, 1, 1, 1, &buffer, 1)
 
 				So(grid, ShouldResemble, expected)
 			})
@@ -180,7 +180,7 @@ func TestRenderBuffer(t *testing.T) {
 				expected := StringToRuneGrid(partiallyVisible, '.')
 
 				settings := editor.DefaultSettings()
-				grid.RenderBuffer(&settings, 0, 0, 1, 1, &buffer)
+				grid.RenderBuffer(&settings, 0, 0, 1, 1, &buffer, 1)
 
 				So(grid, ShouldResemble, expected)
 			})
@@ -199,7 +199,7 @@ func TestRenderBuffer(t *testing.T) {
 		grid := New(11, 4)
 		expected := StringToRuneGrid(tabTest, '.')
 		settings := editor.DefaultSettings()
-		grid.RenderBuffer(&settings, 0, 0, 11, 4, &buffer)
+		grid.RenderBuffer(&settings, 0, 0, 11, 4, &buffer, 1)
 		So(grid, ShouldResemble, expected)
 	})
 }

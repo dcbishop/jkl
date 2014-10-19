@@ -53,43 +53,78 @@ func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
 	grid.RenderPane(editor, x1, y1, x2, y2, editor.CurrentPane())
 }
 
-// RenderPane render the Pane and it's contents
+// RenderPane render the Pane and it's contents.
 func (grid *RuneGrid) RenderPane(editor editor.Editor, x1, y1, x2, y2 int, pane *editor.Pane) {
 	if pane.Buffer() == nil {
 		return
 	}
-	grid.RenderBuffer(editor.Settings(), x1, y1, x2, y2, pane.Buffer())
+	UpdateTopLine(editor.Settings(), pane, y2-y1)
+	grid.RenderBuffer(editor.Settings(), x1, y1, x2, y2, pane.Buffer(), pane.TopLine())
+}
+
+// UpdateTopLine sets the given Pane's TopLine based on the cursor position.
+// [TODO]: Move this into editor module and run it when resize event occurs or cursor is moved. - 2014-10-19 03:09pm
+func UpdateTopLine(
+	settings *editor.Settings,
+	pane *editor.Pane,
+	visibleHeight int,
+) {
+	_, line := pane.Cursor().Position()
+
+	if settings.ScrollOffset*2 > visibleHeight {
+		newLine := line - visibleHeight/2
+		if newLine < 1 {
+			newLine = 1
+		}
+		pane.SetTopLine(newLine)
+		return
+	}
+
+	if pane.TopLine() > (line - settings.ScrollOffset) {
+		pane.SetTopLine(line - settings.ScrollOffset)
+		return
+	}
+
+	bottomLine := pane.TopLine() + visibleHeight
+	if bottomLine < (line + settings.ScrollOffset) {
+		pane.SetTopLine(line + settings.ScrollOffset - visibleHeight)
+		return
+	}
 }
 
 // RenderBuffer blits the buffer onto the grid.
-// wrap sets line wrapping on
-// linebrake sets soft wrapping
 func (grid *RuneGrid) RenderBuffer(
 	settings *editor.Settings,
 	x1, y1, x2, y2 int,
 	buffer buffer.Buffer,
+	topLine int,
 ) {
+	if topLine < 1 {
+		topLine = 1
+	}
+
 	xPos := x1
 	yPos := y1
 
-	for _, r := range buffer.Data() {
-		if r == '\n' {
-			yPos++
-			xPos = x1
-			continue
-		}
-		if xPos <= x2 && yPos <= y2 {
-			if r == '\t' {
-				for i := 0; i < settings.ShiftWidth; i++ {
-					grid.SetCell(xPos, yPos, ' ')
+	// [TODO]: Offset render by topline - 2014-10-19 05:20pm
+	lines, _ := buffer.GetLines(topLine, topLine+y2-y1)
+	for _, line := range lines {
+		for _, r := range line {
+			if xPos <= x2 && yPos <= y2 {
+				if r == '\t' {
+					for i := 0; i < settings.ShiftWidth; i++ {
+						grid.SetCell(xPos, yPos, ' ')
+						xPos++
+					}
+				} else {
+					grid.SetCell(xPos, yPos, rune(r))
 					xPos++
 				}
-			} else {
-				grid.SetCell(xPos, yPos, rune(r))
-				xPos++
-			}
 
+			}
 		}
+		yPos++
+		xPos = x1
 	}
 }
 

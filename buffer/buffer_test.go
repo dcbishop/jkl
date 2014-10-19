@@ -92,3 +92,56 @@ func TestGetLine(t *testing.T) {
 		So(err, ShouldBeNil)
 	})
 }
+
+var testData2 = []byte(`1
+2
+3`)
+
+func TestGetLines(t *testing.T) {
+	Convey("Test multiline Buffer", t, func() {
+		buffer := New()
+		buffer.SetData(testData2)
+
+		Convey("get all lines", func() {
+			line, err := buffer.GetLines(1, 3)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, []string{"1", "2", "3"})
+		})
+
+		Convey("get first 2 lines", func() {
+			line, err := buffer.GetLines(1, 2)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, []string{"1", "2"})
+		})
+
+		Convey("get last 2 lines", func() {
+			line, err := buffer.GetLines(2, 3)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, []string{"2", "3"})
+		})
+
+		Convey("get single line", func() {
+			line, err := buffer.GetLines(2, 2)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, []string{"2"})
+		})
+
+		Convey("get reversed range should return an error", func() {
+			line, err := buffer.GetLines(3, 1)
+			So(err, ShouldNotBeNil)
+			So(line, ShouldResemble, []string{})
+		})
+
+		Convey("get more lines than exist should get lines that do exist", func() {
+			line, err := buffer.GetLines(1, 4)
+			So(err, ShouldBeNil)
+			So(line, ShouldResemble, []string{"1", "2", "3"})
+		})
+
+		Convey("get negative line should get lines that do exist", func() {
+			line, err := buffer.GetLines(-1, 3)
+			So(line, ShouldResemble, []string{"1", "2", "3"})
+			So(err, ShouldBeNil)
+		})
+	})
+}
