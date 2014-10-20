@@ -8,6 +8,12 @@ type TermboxDriver struct {
 	quit   chan interface{}
 }
 
+// NewTermboxDriver constructs a new TermboxDriver.
+func NewTermboxDriver() TermboxDriver {
+	tbd := TermboxDriver{}
+	return tbd
+}
+
 // Size returns the current size of the terminal from Termbox.
 func (tbd *TermboxDriver) Size() (width int, height int) {
 	return termbox.Size()

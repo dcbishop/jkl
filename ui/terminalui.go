@@ -117,7 +117,8 @@ func (tui *TerminalUI) cleanUp() {
 
 func (tui *TerminalUI) initializeConsoleDriver() {
 	if tui.Console == nil {
-		tui.Console = &TermboxDriver{}
+		tbd := NewTermboxDriver()
+		tui.Console = &tbd
 	}
 }
 
