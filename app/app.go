@@ -26,6 +26,8 @@ func New(fa fileaccessor.FileAccessor) App {
 	app := App{
 		editor: &editor,
 	}
+	app.initializeQuitChannel()
+
 	return app
 }
 
@@ -78,14 +80,18 @@ func (app *App) initialize() {
 }
 
 func (app *App) initializeQuitChannel() {
+	if app.quit != nil {
+		return
+	}
 	app.quit = make(chan interface{})
 }
 
 func (app *App) initializeUI() {
-	if app.UI == nil {
-		tui := ui.NewTerminalUI()
-		app.UI = &tui
+	if app.UI != nil {
+		return
 	}
+	tui := ui.NewTerminalUI()
+	app.UI = &tui
 }
 
 func (app *App) loopUntilQuit() {
