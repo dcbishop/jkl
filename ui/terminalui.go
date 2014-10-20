@@ -30,6 +30,12 @@ type TerminalUI struct {
 	Console ConsoleDriver
 }
 
+// NewTerminalUI constructs a new TerminalUI.
+func NewTerminalUI() TerminalUI {
+	tui := TerminalUI{}
+	return tui
+}
+
 // Run enters the main UI loop untill Stop() is called.
 func (tui *TerminalUI) Run() {
 	if tui.state.SetRunning() != nil {

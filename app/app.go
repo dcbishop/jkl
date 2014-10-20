@@ -83,7 +83,8 @@ func (app *App) initializeQuitChannel() {
 
 func (app *App) initializeUI() {
 	if app.UI == nil {
-		app.UI = &ui.TerminalUI{}
+		tui := ui.NewTerminalUI()
+		app.UI = &tui
 	}
 }
 
