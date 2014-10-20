@@ -25,7 +25,8 @@ var fakeFileAccessor = fileaccessor.Virtual{fakeFileSystem}
 func fakeApp() App {
 	app := New(fakeFileAccessor)
 	tui := ui.NewTerminalUI()
-	tui.Console = &ui.FakeDriver{}
+	fd := ui.NewFakeDriver()
+	tui.Console = &fd
 	app.UI = &tui
 	return app
 }

@@ -12,6 +12,11 @@ type FakeDriver struct {
 	Grid      runegrid.RuneGrid
 }
 
+func NewFakeDriver() FakeDriver {
+	fd := FakeDriver{}
+	return fd
+}
+
 func (fd *FakeDriver) Init() {
 	fd.EventChan = make(chan Event)
 	if fd.Width == 0 {
