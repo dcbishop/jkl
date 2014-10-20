@@ -27,13 +27,14 @@ type Event struct {
 // FakeUI for disabling output, injecting input and testing.
 type FakeUI struct {
 	state     service.State
-	EventChan chan Event
-	Quit      chan bool
+	eventChan chan Event
+	quit      chan interface{}
 }
 
 // NewFakeUI constructs a new FakeUI.
 func NewFakeUI() FakeUI {
 	fui := FakeUI{}
+	fui.initialize()
 	return fui
 }
 
@@ -43,12 +44,18 @@ func (ui *FakeUI) Run() {
 		panic("Fake UI already running.")
 	}
 
-	ui.EventChan = make(chan Event)
-	ui.Quit = make(chan bool)
-
+	ui.initialize()
 	ui.loopUntilQuit()
-
 	ui.state.SetStopped()
+}
+
+func (ui *FakeUI) initialize() {
+	if ui.quit == nil {
+		ui.quit = make(chan interface{})
+	}
+	if ui.eventChan == nil {
+		ui.eventChan = make(chan Event)
+	}
 }
 
 // Stop the service
@@ -56,7 +63,8 @@ func (ui *FakeUI) Stop() {
 	if !ui.Running() {
 		return
 	}
-	close(ui.Quit)
+
+	ui.quit <- true
 	service.WaitUntilStopped(ui, time.Second)
 }
 
@@ -67,7 +75,7 @@ func (ui *FakeUI) Running() bool {
 
 // Events returns the channel that produces events
 func (ui *FakeUI) Events() <-chan Event {
-	return ui.EventChan
+	return ui.eventChan
 }
 
 // Redraw updates the display
@@ -78,7 +86,7 @@ func (ui *FakeUI) loopUntilQuit() {
 loop:
 	for {
 		select {
-		case <-ui.Quit:
+		case <-ui.quit:
 			break loop
 		}
 	}
