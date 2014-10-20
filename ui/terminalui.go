@@ -33,6 +33,7 @@ type TerminalUI struct {
 // NewTerminalUI constructs a new TerminalUI.
 func NewTerminalUI() TerminalUI {
 	tui := TerminalUI{}
+	tui.initializeQuitChannel()
 	return tui
 }
 
@@ -56,7 +57,7 @@ func (tui *TerminalUI) Running() bool {
 
 // Stop terminates the Run loop.
 func (tui *TerminalUI) Stop() {
-	if tui.quit == nil {
+	if !tui.Running() {
 		return
 	}
 	close(tui.quit)
@@ -116,13 +117,19 @@ func (tui *TerminalUI) cleanUp() {
 }
 
 func (tui *TerminalUI) initializeConsoleDriver() {
-	if tui.Console == nil {
-		tbd := NewTermboxDriver()
-		tui.Console = &tbd
+	if tui.Console != nil {
+		return
 	}
+
+	tbd := NewTermboxDriver()
+	tui.Console = &tbd
 }
 
 func (tui *TerminalUI) initializeQuitChannel() {
+	if tui.quit != nil {
+		return
+	}
+
 	tui.quit = make(chan bool)
 }
 
