@@ -25,7 +25,9 @@ func TestStringToRuneGrid(t *testing.T) {
 		}
 
 		runegrid := StringToRuneGrid(UnicodeBox, ' ')
-		So(runegrid.Width(), ShouldEqual, 3)
+		width, height := runegrid.Size()
+		So(width, ShouldEqual, 3)
+		So(height, ShouldEqual, 3)
 		So(runegrid.cells, ShouldResemble, expected)
 	})
 }
@@ -132,8 +134,9 @@ func TestRenderBuffer(t *testing.T) {
 
 		Convey("3x3 RuneGrid", func() {
 			grid := New(3, 3)
-			So(grid.Width(), ShouldEqual, 3)
-			So(grid.Height(), ShouldEqual, 3)
+			width, height := grid.Size()
+			So(width, ShouldEqual, 3)
+			So(height, ShouldEqual, 3)
 			Convey("Basic Render", func() {
 				expected := StringToRuneGrid(OneToNine, '.')
 

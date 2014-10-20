@@ -145,14 +145,9 @@ func (grid *RuneGrid) IsCellValid(x, y int) bool {
 	return true
 }
 
-// Width gets the width of the grid.
-func (grid *RuneGrid) Width() int {
-	return grid.width
-}
-
-// Height gets the height of the grid.
-func (grid *RuneGrid) Height() int {
-	return grid.height
+// Size returns the size of the grid.
+func (grid *RuneGrid) Size() (int, int) {
+	return grid.width, grid.height
 }
 
 // Cells gets the cells of the grid.

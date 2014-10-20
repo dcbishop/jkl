@@ -83,8 +83,7 @@ func TestRedraw(t *testing.T) {
 	Convey("Basic Editor.", t, func() {
 		tui := NewTerminalUI()
 		console := NewFakeDriver()
-		console.Width = 3
-		console.Height = 3
+		console.SetSize(3, 3)
 		tui.Console = &console
 
 		go tui.Run()
