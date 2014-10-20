@@ -60,7 +60,7 @@ func (tui *TerminalUI) Stop() {
 	if !tui.Running() {
 		return
 	}
-	close(tui.quit)
+	tui.quit <- true
 	service.WaitUntilStopped(tui, time.Second)
 }
 
@@ -108,7 +108,6 @@ func (tui *TerminalUI) renderGrid(grid *runegrid.RuneGrid) {
 
 func (tui *TerminalUI) initialize() {
 	tui.initializeConsoleDriver()
-	tui.initializeQuitChannel()
 	tui.Console.Init()
 }
 

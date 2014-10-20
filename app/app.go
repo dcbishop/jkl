@@ -41,7 +41,8 @@ func (app *App) Run() {
 	if app.state.SetRunning() != nil {
 		panic("App already running.")
 	}
-	app.initialize()
+
+	app.initializeUI()
 
 	go app.UI.Run()
 	defer app.UI.Stop()
@@ -55,11 +56,11 @@ func (app *App) Run() {
 
 // Stop shuts everything down and terminates Run(). Blocks untill clean shutdown.
 func (app *App) Stop() {
-	if app.quit == nil {
+	if !app.Running() {
 		return
 	}
 
-	close(app.quit)
+	app.quit <- true
 
 	if service.WaitUntilStopped(app.UI, time.Second) != nil {
 		log.Println("UI service did not stop in under a second.")

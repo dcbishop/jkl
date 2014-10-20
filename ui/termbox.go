@@ -11,7 +11,17 @@ type TermboxDriver struct {
 // NewTermboxDriver constructs a new TermboxDriver.
 func NewTermboxDriver() TermboxDriver {
 	tbd := TermboxDriver{}
+	tbd.initialize()
 	return tbd
+}
+
+func (tbd *TermboxDriver) initialize() {
+	if tbd.events == nil {
+		tbd.events = make(chan Event)
+	}
+	if tbd.quit == nil {
+		tbd.quit = make(chan interface{})
+	}
 }
 
 // Size returns the current size of the terminal from Termbox.
@@ -21,8 +31,6 @@ func (tbd *TermboxDriver) Size() (width int, height int) {
 
 // Init initilizes the Termbox library.
 func (tbd *TermboxDriver) Init() {
-	tbd.events = make(chan Event)
-	tbd.quit = make(chan interface{})
 	termbox.Init()
 	go tbd.handleEvents()
 }
@@ -33,6 +41,7 @@ func (tbd *TermboxDriver) Init() {
 // the entire TermboxDriver  should be a singleton - 2014-09-30 02:25pm
 func (tbd *TermboxDriver) Close() {
 	close(tbd.quit)
+	tbd.initialize()
 	termbox.Close()
 }
 
