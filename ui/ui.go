@@ -31,6 +31,12 @@ type FakeUI struct {
 	Quit      chan bool
 }
 
+// NewFakeUI constructs a new FakeUI.
+func NewFakeUI() FakeUI {
+	fui := FakeUI{}
+	return fui
+}
+
 // Run starts the service. Will block until Stop() is called.
 func (ui *FakeUI) Run() {
 	if ui.state.SetRunning() != nil {

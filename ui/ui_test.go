@@ -14,7 +14,7 @@ import (
 
 func TestFakeUI(t *testing.T) {
 	Convey("A new FakeUI should be in a stopped state", t, func() {
-		ui := FakeUI{}
+		ui := NewFakeUI()
 		testUI(&ui)
 	})
 }
