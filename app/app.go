@@ -21,10 +21,11 @@ type App struct {
 }
 
 // New constructs a new app from the given options.
-func New(fa fileaccessor.FileAccessor) App {
+func New(fa fileaccessor.FileAccessor, UI ui.UI) App {
 	editor := editor.New(fa)
 	app := App{
 		editor: &editor,
+		UI:     UI,
 	}
 	app.initializeQuitChannel()
 
@@ -41,8 +42,6 @@ func (app *App) Run() {
 	if app.state.SetRunning() != nil {
 		panic("App already running.")
 	}
-
-	app.initializeUI()
 
 	go app.UI.Run()
 	defer app.UI.Stop()
@@ -75,24 +74,11 @@ func (app *App) Running() bool {
 	return app.state.Running()
 }
 
-func (app *App) initialize() {
-	app.initializeQuitChannel()
-	app.initializeUI()
-}
-
 func (app *App) initializeQuitChannel() {
 	if app.quit != nil {
 		return
 	}
 	app.quit = make(chan interface{})
-}
-
-func (app *App) initializeUI() {
-	if app.UI != nil {
-		return
-	}
-	tui := ui.NewTerminalUI()
-	app.UI = &tui
 }
 
 func (app *App) loopUntilQuit() {

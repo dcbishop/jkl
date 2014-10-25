@@ -31,8 +31,10 @@ type TerminalUI struct {
 }
 
 // NewTerminalUI constructs a new TerminalUI.
-func NewTerminalUI() TerminalUI {
-	tui := TerminalUI{}
+func NewTerminalUI(driver ConsoleDriver) TerminalUI {
+	tui := TerminalUI{
+		Console: driver,
+	}
 	tui.initializeQuitChannel()
 	return tui
 }

@@ -23,11 +23,9 @@ var fakeFileSystem = map[string][]byte{
 var fakeFileAccessor = fileaccessor.Virtual{fakeFileSystem}
 
 func fakeApp() App {
-	app := New(fakeFileAccessor)
-	tui := ui.NewTerminalUI()
 	fd := ui.NewFakeDriver()
-	tui.Console = &fd
-	app.UI = &tui
+	tui := ui.NewTerminalUI(&fd)
+	app := New(fakeFileAccessor, &tui)
 	return app
 }
 

@@ -7,11 +7,14 @@ import (
 	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/app"
 	"github.com/dcbishop/jkl/cli"
+	"github.com/dcbishop/jkl/ui"
 )
 
 func main() {
 	options := processArguments()
-	app := app.New(fileaccessor.LocalStorage{})
+	driver := ui.NewTermboxDriver()
+	ui := ui.NewTerminalUI(&driver)
+	app := app.New(fileaccessor.LocalStorage{}, &ui)
 	app.LoadOptions(options)
 	app.Run()
 }

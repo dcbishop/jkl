@@ -21,9 +21,8 @@ func TestFakeUI(t *testing.T) {
 
 func TestTermbox(t *testing.T) {
 	Convey("A new TerminalUI should be in a stopped state", t, func() {
-		ui := NewTerminalUI()
 		fd := NewFakeDriver()
-		ui.Console = &fd
+		ui := NewTerminalUI(&fd)
 		testUI(&ui)
 	})
 }
@@ -81,10 +80,9 @@ func testUI(ui UI) {
 
 func TestRedraw(t *testing.T) {
 	Convey("Basic Editor.", t, func() {
-		tui := NewTerminalUI()
 		console := NewFakeDriver()
 		console.SetSize(3, 3)
-		tui.Console = &console
+		tui := NewTerminalUI(&console)
 
 		go tui.Run()
 		service.WaitUntilRunning(&tui, time.Second)
