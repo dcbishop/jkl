@@ -6,16 +6,26 @@ import "github.com/nsf/termbox-go"
 type TermboxDriver struct {
 	events chan Event
 	quit   chan interface{}
+	width  int
+	height int
 }
 
 // NewTermboxDriver constructs a new TermboxDriver.
 func NewTermboxDriver() TermboxDriver {
-	tbd := TermboxDriver{}
-	tbd.initialize()
+	tbd := TermboxDriver{
+		width:  0,
+		height: 0,
+	}
+
+	tbd.initializeChannels()
+
+	termbox.Init()
+	tbd.setSize(termbox.Size())
+
 	return tbd
 }
 
-func (tbd *TermboxDriver) initialize() {
+func (tbd *TermboxDriver) initializeChannels() {
 	if tbd.events == nil {
 		tbd.events = make(chan Event)
 	}
@@ -26,22 +36,22 @@ func (tbd *TermboxDriver) initialize() {
 
 // Size returns the current size of the terminal from Termbox.
 func (tbd *TermboxDriver) Size() (width int, height int) {
-	return termbox.Size()
+	return tbd.width, tbd.height
 }
 
 // Init initilizes the Termbox library.
 func (tbd *TermboxDriver) Init() {
-	termbox.Init()
 	go tbd.handleEvents()
 }
 
-// Close closes the Termbox library.
+// Close cleansup the Termbox library.
 // [TODO]: If this is called on one instance of multiple TermboxDriver
-// instances then they all die... Need a refrence count,
-// the entire TermboxDriver  should be a singleton - 2014-09-30 02:25pm
+// instances then they all die... Need a refrence count. - 2014-09-30 02:25pm
 func (tbd *TermboxDriver) Close() {
 	close(tbd.quit)
-	tbd.initialize()
+	tbd.quit = nil
+	tbd.initializeChannels()
+
 	termbox.Close()
 }
 
@@ -83,7 +93,17 @@ loop:
 
 func (tbd *TermboxDriver) handleEvent() {
 	event := termbox.PollEvent()
+
+	if event.Type == termbox.EventResize {
+		tbd.setSize(event.Width, event.Height)
+	}
+
 	tbd.events <- termboxEventToInternal(event)
+}
+
+func (tbd *TermboxDriver) setSize(width, height int) {
+	tbd.width = width
+	tbd.height = height
 }
 
 func termboxEventToInternal(event termbox.Event) Event {
