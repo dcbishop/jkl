@@ -11,7 +11,7 @@ import (
 type UI interface {
 	service.Service
 	Input
-	Redraw(editor editor.Editor)
+	Redraw(editor editor.Interface)
 }
 
 // Input implementers provide a chanel that generates events.
@@ -79,7 +79,7 @@ func (ui *FakeUI) Events() <-chan Event {
 }
 
 // Redraw updates the display
-func (ui *FakeUI) Redraw(editor editor.Editor) {
+func (ui *FakeUI) Redraw(editor editor.Interface) {
 }
 
 func (ui *FakeUI) loopUntilQuit() {

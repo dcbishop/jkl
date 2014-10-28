@@ -29,7 +29,7 @@ func New(width, height int) RuneGrid {
 }
 
 // RenderEditor renders the entire editor window to the grid.
-func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
+func (grid *RuneGrid) RenderEditor(editor editor.Interface) {
 	x1 := 0
 	y1 := 0
 	x2 := grid.width - 1
@@ -54,7 +54,7 @@ func (grid *RuneGrid) RenderEditor(editor editor.Editor) {
 }
 
 // RenderPane render the Pane and it's contents.
-func (grid *RuneGrid) RenderPane(editor editor.Editor, x1, y1, x2, y2 int, pane *editor.Pane) {
+func (grid *RuneGrid) RenderPane(editor editor.Interface, x1, y1, x2, y2 int, pane *editor.Pane) {
 	if pane.Buffer() == nil {
 		return
 	}

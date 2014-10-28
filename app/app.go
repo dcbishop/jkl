@@ -17,7 +17,7 @@ type App struct {
 	quit   chan interface{}
 	UI     ui.UI
 	state  service.State
-	editor editor.Editor
+	editor editor.Interface
 }
 
 // New constructs a new app from the given options.

@@ -134,8 +134,8 @@ func (pane *Pane) SetTopLine(topLine int) {
 	pane.topLine = topLine
 }
 
-// Editor contains buffers and performs actions on them.
-type Editor interface {
+// Interface contains buffers and performs actions on them.
+type Interface interface {
 	OpenFiles(filenames []string)
 	OpenFile(filename string)
 	AddBuffer(buffer buffer.Interface) buffer.Interface
@@ -147,7 +147,7 @@ type Editor interface {
 	Settings() *Settings
 }
 
-// Jkl is the standard implementation of Editor
+// Jkl is the standard implementation of editor.Interface
 type Jkl struct {
 	fa          fileaccessor.FileAccessor
 	currentPane *Pane
