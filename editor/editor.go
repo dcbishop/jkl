@@ -31,7 +31,7 @@ func DefaultSettings() Settings {
 type Cursor struct {
 	x      int
 	line   int
-	buffer buffer.Buffer
+	buffer buffer.Interface
 }
 
 // Position reutrns the cursors current position.
@@ -92,8 +92,8 @@ func (cursor *Cursor) EndOfLine() (xPos int, lineNumber int) {
 
 // Pane represents a 'Window' in the editor. It has a Buffer.
 type Pane struct {
-	buffer  buffer.Buffer
-	cursors map[buffer.Buffer]*Cursor
+	buffer  buffer.Interface
+	cursors map[buffer.Interface]*Cursor
 	topLine int
 }
 
@@ -101,7 +101,7 @@ type Pane struct {
 func NewPane() Pane {
 	return Pane{
 		buffer:  nil,
-		cursors: make(map[buffer.Buffer]*Cursor),
+		cursors: make(map[buffer.Interface]*Cursor),
 		topLine: 1,
 	}
 }
@@ -112,12 +112,12 @@ func (pane *Pane) Cursor() *Cursor {
 }
 
 // Buffer returns the Buffer of the Pane
-func (pane *Pane) Buffer() buffer.Buffer {
+func (pane *Pane) Buffer() buffer.Interface {
 	return pane.buffer
 }
 
 // SetBuffer binds a Buffer to the Pane and creates a Cursor if needed.
-func (pane *Pane) SetBuffer(buffer buffer.Buffer) {
+func (pane *Pane) SetBuffer(buffer buffer.Interface) {
 	pane.buffer = buffer
 	if pane.Cursor() == nil {
 		pane.cursors[pane.buffer] = &Cursor{buffer: pane.buffer}
@@ -138,11 +138,11 @@ func (pane *Pane) SetTopLine(topLine int) {
 type Editor interface {
 	OpenFiles(filenames []string)
 	OpenFile(filename string)
-	AddBuffer(buffer buffer.Buffer) buffer.Buffer
+	AddBuffer(buffer buffer.Interface) buffer.Interface
 	CurrentPane() *Pane
 	SetCurrentPane(pane *Pane)
-	Buffers() []buffer.Buffer
-	LastBuffer() buffer.Buffer
+	Buffers() []buffer.Interface
+	LastBuffer() buffer.Interface
 	Panes() []*Pane
 	Settings() *Settings
 }
@@ -151,7 +151,7 @@ type Editor interface {
 type Jkl struct {
 	fa          fileaccessor.FileAccessor
 	currentPane *Pane
-	buffers     []buffer.Buffer
+	buffers     []buffer.Interface
 	panes       []*Pane
 	settings    Settings
 }
@@ -184,7 +184,7 @@ func (editor *Jkl) OpenFiles(filenames []string) {
 }
 
 // openFile reads a file, loads it into a new buffer and adds it to the list of buffers
-func (editor *Jkl) openFile(filename string) buffer.Buffer {
+func (editor *Jkl) openFile(filename string) buffer.Interface {
 	buffer := buffer.New()
 
 	buffer.SetFilename(filename)
@@ -204,13 +204,13 @@ func (editor *Jkl) OpenFile(filename string) {
 }
 
 // AddBuffer adds a buffer to the list of buffers
-func (editor *Jkl) AddBuffer(buffer buffer.Buffer) buffer.Buffer {
+func (editor *Jkl) AddBuffer(buffer buffer.Interface) buffer.Interface {
 	editor.buffers = append(editor.buffers, buffer)
 	return editor.LastBuffer()
 }
 
 // LastBuffer returns a pointer to the last buffer in the list of buffers
-func (editor *Jkl) LastBuffer() buffer.Buffer {
+func (editor *Jkl) LastBuffer() buffer.Interface {
 	return editor.buffers[len(editor.buffers)-1]
 }
 
@@ -225,7 +225,7 @@ func (editor *Jkl) SetCurrentPane(pane *Pane) {
 }
 
 // Buffers returns a slice containing the buffers.
-func (editor *Jkl) Buffers() []buffer.Buffer {
+func (editor *Jkl) Buffers() []buffer.Interface {
 	return editor.buffers
 }
 

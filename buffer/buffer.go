@@ -5,8 +5,8 @@ import (
 	"errors"
 )
 
-// Buffer contains the text to edit.
-type Buffer interface {
+// Interface is the Buffer interface.
+type Interface interface {
 	Filename() string
 	SetFilename(filename string)
 	Data() []byte

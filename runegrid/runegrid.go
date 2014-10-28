@@ -96,7 +96,7 @@ func UpdateTopLine(
 func (grid *RuneGrid) RenderBuffer(
 	settings *editor.Settings,
 	x1, y1, x2, y2 int,
-	buffer buffer.Buffer,
+	buffer buffer.Interface,
 	topLine int,
 ) {
 	if topLine < 1 {
