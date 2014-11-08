@@ -72,7 +72,7 @@ func (tui *TerminalUI) Events() <-chan Event {
 }
 
 // Redraw updates the display
-func (tui *TerminalUI) Redraw(editor editor.Interface) {
+func (tui *TerminalUI) Redraw(editor *editor.Editor) {
 	if !tui.state.Running() {
 		return
 	}
