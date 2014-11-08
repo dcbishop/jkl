@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/dcbishop/jkl/editor"
-	"github.com/dcbishop/jkl/runegrid"
 	"github.com/dcbishop/jkl/service"
 	"github.com/nsf/termbox-go"
 )
@@ -80,7 +79,7 @@ func (tui *TerminalUI) Redraw(editor *editor.Editor) {
 
 	// [TODO]: Cache runegrid and change on resize only - 2014-09-27 10:10pm
 	width, height := tui.Console.Size()
-	grid := runegrid.New(width, height)
+	grid := NewRuneGrid(width, height)
 	grid.RenderEditor(editor)
 
 	tui.renderGrid(&grid)
@@ -100,7 +99,7 @@ func (tui *TerminalUI) Redraw(editor *editor.Editor) {
 	tui.Console.SetCursor(xPos, linePos-1)
 }
 
-func (tui *TerminalUI) renderGrid(grid *runegrid.RuneGrid) {
+func (tui *TerminalUI) renderGrid(grid *RuneGrid) {
 	for y, l := range grid.Cells() {
 		for x, r := range l {
 			tui.Console.SetCell(x, y, r, termbox.ColorWhite, termbox.ColorRed)

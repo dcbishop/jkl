@@ -1,4 +1,4 @@
-package runegrid
+package ui
 
 import (
 	"strings"
@@ -39,7 +39,7 @@ const Empty3x3 = `
 
 func TestRuneGrid(t *testing.T) {
 	Convey("New 3x3 grid should be filled with NULL bytes", t, func() {
-		grid := New(3, 3)
+		grid := NewRuneGrid(3, 3)
 		expected := StringToRuneGrid(Empty3x3, '.')
 
 		So(grid, ShouldResemble, expected)
@@ -85,7 +85,7 @@ func TestRenderEditor(t *testing.T) {
 		}}
 		editor := editor.New(fa)
 		editor.OpenFile("file.txt")
-		grid := New(3, 3)
+		grid := NewRuneGrid(3, 3)
 
 		expected := StringToRuneGrid(Empty3x3, '.')
 
@@ -132,7 +132,7 @@ func TestRenderBuffer(t *testing.T) {
 		So(buffer.Data(), ShouldResemble, renderTest)
 
 		Convey("3x3 RuneGrid", func() {
-			grid := New(3, 3)
+			grid := NewRuneGrid(3, 3)
 			width, height := grid.Size()
 			So(width, ShouldEqual, 3)
 			So(height, ShouldEqual, 3)
@@ -198,7 +198,7 @@ func TestRenderBuffer(t *testing.T) {
 }..........
 ...........
 `
-		grid := New(11, 4)
+		grid := NewRuneGrid(11, 4)
 		expected := StringToRuneGrid(tabTest, '.')
 		settings := editor.DefaultSettings()
 		grid.RenderBuffer(&settings, 0, 0, 11, 4, &buffer, 1)

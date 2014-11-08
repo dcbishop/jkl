@@ -6,7 +6,6 @@ import (
 
 	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/editor"
-	"github.com/dcbishop/jkl/runegrid"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
@@ -93,7 +92,7 @@ func TestRedraw(t *testing.T) {
 		editor := editor.New(fa)
 		editor.OpenFile("file.txt")
 
-		expected := runegrid.StringToRuneGrid(testhelpers.Empty3x3, '.')
+		expected := StringToRuneGrid(testhelpers.Empty3x3, '.')
 		So(console.Grid, ShouldResemble, expected)
 
 		Convey("Render 3x3 with default settings", func() {
@@ -102,7 +101,7 @@ func TestRedraw(t *testing.T) {
 			║!║
 			╚═╝
 			`
-			expected := runegrid.StringToRuneGrid(UnicodeBox, 0)
+			expected := StringToRuneGrid(UnicodeBox, 0)
 			tui.Redraw(&editor)
 
 			So(console.Grid, ShouldResemble, expected)

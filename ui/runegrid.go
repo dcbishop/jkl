@@ -1,4 +1,4 @@
-package runegrid
+package ui
 
 import (
 	"github.com/dcbishop/jkl/editor"
@@ -13,7 +13,7 @@ type RuneGrid struct {
 }
 
 // New constructs a RuneGrid with the given width and height
-func New(width, height int) RuneGrid {
+func NewRuneGrid(width, height int) RuneGrid {
 	grid := RuneGrid{
 		width:  width,
 		height: height,
@@ -216,10 +216,10 @@ func StringToRuneGrid(s string, replaceWithNul rune) RuneGrid {
 	cells := testhelpers.StringToRunes(s, replaceWithNul)
 	height := len(cells)
 	if height == 1 {
-		return New(0, 0)
+		return NewRuneGrid(0, 0)
 	}
 	width := len(cells[0])
-	grid := New(width, height)
+	grid := NewRuneGrid(width, height)
 	grid.cells = cells
 	return grid
 }

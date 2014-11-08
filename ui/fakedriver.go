@@ -1,7 +1,5 @@
 package ui
 
-import "github.com/dcbishop/jkl/runegrid"
-
 // FakeDriver is a ConsoleDriver that doesn't do anything.
 type FakeDriver struct {
 	EventChan chan Event
@@ -9,7 +7,7 @@ type FakeDriver struct {
 	height    int
 	CursorX   int
 	CursorY   int
-	Grid      runegrid.RuneGrid
+	Grid      RuneGrid
 }
 
 func NewFakeDriver() FakeDriver {
@@ -23,7 +21,7 @@ func NewFakeDriver() FakeDriver {
 func (fd *FakeDriver) SetSize(width, height int) {
 	fd.width = width
 	fd.height = height
-	fd.Grid = runegrid.New(fd.width, fd.height)
+	fd.Grid = NewRuneGrid(fd.width, fd.height)
 }
 
 func (fd *FakeDriver) Init() {
