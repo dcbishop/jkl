@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/dcbishop/fileaccessor"
-	"github.com/dcbishop/jkl/buffer"
 	"github.com/dcbishop/jkl/editor"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -128,7 +127,7 @@ var renderTest = []byte(strings.Trim(OneToNine, "\n"))
 
 func TestRenderBuffer(t *testing.T) {
 	Convey("Basic Buffer", t, func() {
-		buffer := buffer.New()
+		buffer := editor.NewBuffer()
 		buffer.SetData(renderTest)
 		So(buffer.Data(), ShouldResemble, renderTest)
 
@@ -191,7 +190,7 @@ func TestRenderBuffer(t *testing.T) {
 	})
 
 	Convey("Tabs should render as 4 spaces by default", t, func() {
-		buffer := buffer.New()
+		buffer := editor.NewBuffer()
 		buffer.SetData([]byte("{\n\tint a;\n}"))
 		tabTest := `
 {..........

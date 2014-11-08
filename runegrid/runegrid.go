@@ -1,7 +1,6 @@
 package runegrid
 
 import (
-	"github.com/dcbishop/jkl/buffer"
 	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/testhelpers"
 )
@@ -96,7 +95,7 @@ func UpdateTopLine(
 func (grid *RuneGrid) RenderBuffer(
 	settings *editor.Settings,
 	x1, y1, x2, y2 int,
-	buffer *buffer.Buffer,
+	buffer *editor.Buffer,
 	topLine int,
 ) {
 	if topLine < 1 {

@@ -1,4 +1,4 @@
-package buffer
+package editor
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ type Buffer struct {
 }
 
 // New constructs a new ByteBuffer object containing data.
-func New() Buffer {
+func NewBuffer() Buffer {
 	return Buffer{}
 }
 

@@ -1,4 +1,4 @@
-package buffer
+package editor
 
 import (
 	"testing"
@@ -7,8 +7,8 @@ import (
 )
 
 func TestBuffer(t *testing.T) {
-	Convey("New() buffer", t, func() {
-		buffer := New()
+	Convey("NewBuffer() buffer", t, func() {
+		buffer := NewBuffer()
 		So(len(buffer.Data()), ShouldEqual, 0)
 		So(buffer.Filename(), ShouldEqual, "")
 
@@ -31,7 +31,7 @@ This is line 3.`)
 
 func TestGetLine(t *testing.T) {
 	Convey("Test multiline Buffer", t, func() {
-		buffer := New()
+		buffer := NewBuffer()
 		buffer.SetData(testData)
 
 		Convey("get first line", func() {
@@ -66,7 +66,7 @@ func TestGetLine(t *testing.T) {
 		data := []byte{84, 101, 115, 116, 10}
 
 		Convey("get first line", func() {
-			buffer := New()
+			buffer := NewBuffer()
 			buffer.SetData(data)
 			line, err := buffer.GetLine(1)
 			So(line, ShouldResemble, "Test")
@@ -74,7 +74,7 @@ func TestGetLine(t *testing.T) {
 		})
 
 		Convey("get missing 2nd line", func() {
-			buffer := New()
+			buffer := NewBuffer()
 			buffer.SetData(data)
 			line, err := buffer.GetLine(2)
 			So(line, ShouldResemble, "")
@@ -85,7 +85,7 @@ func TestGetLine(t *testing.T) {
 	Convey("Test double line feed terminated Buffer", t, func() {
 		// "Test" with double line feed
 		data := []byte{84, 101, 115, 116, 10, 10}
-		buffer := New()
+		buffer := NewBuffer()
 		buffer.SetData(data)
 		line, err := buffer.GetLine(2)
 		So(line, ShouldResemble, "")
@@ -99,7 +99,7 @@ var testData2 = []byte(`1
 
 func TestGetLines(t *testing.T) {
 	Convey("Test multiline Buffer", t, func() {
-		buffer := New()
+		buffer := NewBuffer()
 		buffer.SetData(testData2)
 
 		Convey("get all lines", func() {

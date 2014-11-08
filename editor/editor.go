@@ -2,7 +2,6 @@ package editor
 
 import (
 	"github.com/dcbishop/fileaccessor"
-	"github.com/dcbishop/jkl/buffer"
 )
 
 // Settings stores settings for the editor
@@ -31,7 +30,7 @@ func DefaultSettings() Settings {
 type Cursor struct {
 	x      int
 	line   int
-	buffer *buffer.Buffer
+	buffer *Buffer
 }
 
 // Position reutrns the cursors current position.
@@ -92,8 +91,8 @@ func (cursor *Cursor) EndOfLine() (xPos int, lineNumber int) {
 
 // Pane represents a 'Window' in the editor. It has a Buffer.
 type Pane struct {
-	buffer  *buffer.Buffer
-	cursors map[*buffer.Buffer]*Cursor
+	buffer  *Buffer
+	cursors map[*Buffer]*Cursor
 	topLine int
 }
 
@@ -101,7 +100,7 @@ type Pane struct {
 func NewPane() Pane {
 	return Pane{
 		buffer:  nil,
-		cursors: make(map[*buffer.Buffer]*Cursor),
+		cursors: make(map[*Buffer]*Cursor),
 		topLine: 1,
 	}
 }
@@ -112,12 +111,12 @@ func (pane *Pane) Cursor() *Cursor {
 }
 
 // Buffer returns the Buffer of the Pane
-func (pane *Pane) Buffer() *buffer.Buffer {
+func (pane *Pane) Buffer() *Buffer {
 	return pane.buffer
 }
 
 // SetBuffer binds a Buffer to the Pane and creates a Cursor if needed.
-func (pane *Pane) SetBuffer(buffer *buffer.Buffer) {
+func (pane *Pane) SetBuffer(buffer *Buffer) {
 	pane.buffer = buffer
 	if pane.Cursor() == nil {
 		pane.cursors[pane.buffer] = &Cursor{buffer: pane.buffer}
@@ -138,7 +137,7 @@ func (pane *Pane) SetTopLine(topLine int) {
 type Editor struct {
 	fa          fileaccessor.FileAccessor
 	currentPane *Pane
-	buffers     []*buffer.Buffer
+	buffers     []*Buffer
 	panes       []*Pane
 	settings    Settings
 }
@@ -171,8 +170,8 @@ func (editor *Editor) OpenFiles(filenames []string) {
 }
 
 // openFile reads a file, loads it into a new buffer and adds it to the list of buffers.
-func (editor *Editor) openFile(filename string) buffer.Buffer {
-	buffer := buffer.New()
+func (editor *Editor) openFile(filename string) Buffer {
+	buffer := NewBuffer()
 
 	buffer.SetFilename(filename)
 
@@ -191,13 +190,13 @@ func (editor *Editor) OpenFile(filename string) {
 }
 
 // AddBuffer adds a buffer to the list of buffers.
-func (editor *Editor) AddBuffer(buffer *buffer.Buffer) *buffer.Buffer {
+func (editor *Editor) AddBuffer(buffer *Buffer) *Buffer {
 	editor.buffers = append(editor.buffers, buffer)
 	return editor.LastBuffer()
 }
 
 // LastBuffer returns a pointer to the last buffer in the list of buffers.
-func (editor *Editor) LastBuffer() *buffer.Buffer {
+func (editor *Editor) LastBuffer() *Buffer {
 	return editor.buffers[len(editor.buffers)-1]
 }
 
@@ -212,7 +211,7 @@ func (editor *Editor) SetCurrentPane(pane *Pane) {
 }
 
 // Buffers returns a slice containing the buffers.
-func (editor *Editor) Buffers() []*buffer.Buffer {
+func (editor *Editor) Buffers() []*Buffer {
 	return editor.buffers
 }
 

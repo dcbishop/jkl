@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/dcbishop/fileaccessor"
-	"github.com/dcbishop/jkl/buffer"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -48,7 +47,7 @@ Line 3`)
 
 func TestCursor(t *testing.T) {
 	Convey("New cursor", t, func() {
-		buffer := buffer.New()
+		buffer := NewBuffer()
 		buffer.SetData(data)
 		cursor := Cursor{buffer: &buffer}
 
