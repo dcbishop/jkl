@@ -5,49 +5,39 @@ import (
 	"errors"
 )
 
-// Interface is the Buffer interface.
-type Interface interface {
-	Filename() string
-	SetFilename(filename string)
-	Data() []byte
-	SetData(data []byte)
-	GetLine(lineNum int) (string, error)
-	GetLines(first, last int) ([]string, error)
-}
-
-// Bytes is a simple implenetation of the buffer that stores data in a []byte.
-type Bytes struct {
+// Buffer is a simple implenetation of the buffer that stores data in a []byte.
+type Buffer struct {
 	filename string
 	data     []byte
 }
 
 // New constructs a new ByteBuffer object containing data.
-func New() Bytes {
-	return Bytes{}
+func New() Buffer {
+	return Buffer{}
 }
 
 // Filename returns the buffers filename as a byte slice.
-func (buffer *Bytes) Filename() string {
+func (buffer *Buffer) Filename() string {
 	return buffer.filename
 }
 
 // SetFilename ses the filename of that will be used when the buffer is saved.
-func (buffer *Bytes) SetFilename(filename string) {
+func (buffer *Buffer) SetFilename(filename string) {
 	buffer.filename = filename
 }
 
 // Data returns the buffers data as a byte slice.
-func (buffer *Bytes) Data() []byte {
+func (buffer *Buffer) Data() []byte {
 	return buffer.data
 }
 
 // SetData sets the data of the buffer.
-func (buffer *Bytes) SetData(data []byte) {
+func (buffer *Buffer) SetData(data []byte) {
 	buffer.data = data
 }
 
 // GetLine returns the requested line as a string.
-func (buffer *Bytes) GetLine(lineNum int) (string, error) {
+func (buffer *Buffer) GetLine(lineNum int) (string, error) {
 	lines, _ := buffer.GetLines(lineNum, lineNum)
 	if len(lines) == 1 {
 		return lines[0], nil
@@ -56,7 +46,7 @@ func (buffer *Bytes) GetLine(lineNum int) (string, error) {
 }
 
 // GetLines returns the requested range of lines.
-func (buffer *Bytes) GetLines(first, last int) ([]string, error) {
+func (buffer *Buffer) GetLines(first, last int) ([]string, error) {
 	if first > last {
 		return []string{}, errors.New("Invalid range, first > last.")
 	}
