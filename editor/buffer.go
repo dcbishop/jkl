@@ -3,6 +3,8 @@ package editor
 import (
 	"bytes"
 	"errors"
+	"io"
+	"strings"
 )
 
 // Buffer is a simple implenetation of the buffer that stores data in a []byte.
@@ -11,7 +13,7 @@ type Buffer struct {
 	data     []byte
 }
 
-// New constructs a new ByteBuffer object containing data.
+// NewBuffer constructs a new ByteBuffer object containing data.
 func NewBuffer() Buffer {
 	return Buffer{}
 }
@@ -33,6 +35,22 @@ func (buffer *Buffer) Data() []byte {
 
 // SetData sets the data of the buffer.
 func (buffer *Buffer) SetData(data []byte) {
+	buffer.ReadData(bytes.NewReader(data))
+}
+
+// SetDataString sets the data of the buffer.
+func (buffer *Buffer) SetDataString(data string) {
+	buffer.ReadData(strings.NewReader(data))
+}
+
+// ReadData reads the data from the given stream into the buffer replacing anything already there.
+func (buffer *Buffer) ReadData(data io.Reader) {
+	b := new(bytes.Buffer)
+	b.ReadFrom(data)
+	buffer.setData(b.Bytes())
+}
+
+func (buffer *Buffer) setData(data []byte) {
 	buffer.data = data
 }
 

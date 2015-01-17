@@ -17,22 +17,22 @@ func TestBuffer(t *testing.T) {
 			So(buffer.Filename(), ShouldEqual, "file.txt")
 		})
 
-		Convey("SetData()", func() {
-			data := []byte("Hello, World!")
-			buffer.SetData(data)
-			So(buffer.Data(), ShouldResemble, data)
+		Convey("SetDataString()", func() {
+			data := "Hello, World!"
+			buffer.SetDataString(data)
+			So(buffer.Data(), ShouldResemble, []byte(data))
 		})
 	})
 }
 
-var testData = []byte(`This is line 1.
+var testData = `This is line 1.
 This is line 2.
-This is line 3.`)
+This is line 3.`
 
 func TestGetLine(t *testing.T) {
 	Convey("Test multiline Buffer", t, func() {
 		buffer := NewBuffer()
-		buffer.SetData(testData)
+		buffer.SetDataString(testData)
 
 		Convey("get first line", func() {
 			line, err := buffer.GetLine(1)
@@ -93,14 +93,14 @@ func TestGetLine(t *testing.T) {
 	})
 }
 
-var testData2 = []byte(`1
+var testData2 = `1
 2
-3`)
+3`
 
 func TestGetLines(t *testing.T) {
 	Convey("Test multiline Buffer", t, func() {
 		buffer := NewBuffer()
-		buffer.SetData(testData2)
+		buffer.SetDataString(testData2)
 
 		Convey("get all lines", func() {
 			line, err := buffer.GetLines(1, 3)
