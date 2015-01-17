@@ -4,12 +4,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/ui"
 	"github.com/nsf/termbox-go"
+	"github.com/spf13/afero"
 )
 
 // App is the main program.
@@ -21,8 +21,8 @@ type App struct {
 }
 
 // New constructs a new app from the given options.
-func New(fa fileaccessor.FileAccessor, UI ui.UI) App {
-	editor := editor.New(fa)
+func New(fs afero.Fs, UI ui.UI) App {
+	editor := editor.New(fs)
 	app := App{
 		editor: &editor,
 		UI:     UI,

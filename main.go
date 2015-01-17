@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/app"
 	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/ui"
+	"github.com/spf13/afero"
 )
 
 func main() {
 	options := processArguments()
 	driver := ui.NewTermboxDriver()
 	ui := ui.NewTerminalUI(&driver)
-	app := app.New(fileaccessor.LocalStorage{}, &ui)
+	fs := afero.OsFs{}
+	app := app.New(&fs, &ui)
 	app.LoadOptions(options)
 	app.Run()
 }

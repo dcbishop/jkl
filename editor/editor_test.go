@@ -3,7 +3,7 @@ package editor
 import (
 	"testing"
 
-	"github.com/dcbishop/fileaccessor"
+	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -16,11 +16,10 @@ var fakeFileSystem = map[string][]byte{
 	"fakefile2.txt": fakeFileContents,
 }
 
-var fakeFileAccessor = fileaccessor.Virtual{fakeFileSystem}
-
 func TestOpenFile(t *testing.T) {
 	Convey("editor.OpenFile", t, func() {
-		editor := New(fakeFileAccessor)
+		fs := testhelpers.GetCustomTestFs(fakeFileSystem)
+		editor := New(fs)
 		Convey("with a valid filename, loads file into buffer", func() {
 			So(len(editor.buffers), ShouldEqual, 0)
 

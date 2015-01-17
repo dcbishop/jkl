@@ -1,6 +1,10 @@
 package testhelpers
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/spf13/afero"
+)
 
 // A Unicode box
 const UnicodeBox = `
@@ -49,4 +53,26 @@ func StringToRunes(s string, replaceWithNul rune) [][]rune {
 		}
 	}
 	return grid
+}
+
+var fakeFileSystem = map[string][]byte{
+	"file.txt": []byte(`!`),
+}
+
+// GetTestFs returns an inmemory filesystem with test data.
+func GetTestFs() afero.Fs {
+	return GetCustomTestFs(fakeFileSystem)
+}
+
+// GetCustomTestFs returns an inmemory filesystem with the given test files.
+func GetCustomTestFs(filemap map[string][]byte) afero.Fs {
+	fs := afero.MemMapFs{}
+
+	for filename, data := range filemap {
+		file, _ := fs.Create(filename)
+		defer file.Close()
+		file.Write(data)
+	}
+
+	return &fs
 }

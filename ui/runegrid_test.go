@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/editor"
+	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -80,10 +80,9 @@ func TestRuneGrid(t *testing.T) {
 
 func TestRenderEditor(t *testing.T) {
 	Convey("Basic Editor.", t, func() {
-		fa := fileaccessor.Virtual{map[string][]byte{
-			"file.txt": {'!'},
-		}}
-		editor := editor.New(fa)
+
+		fs := testhelpers.GetTestFs()
+		editor := editor.New(fs)
 		editor.OpenFile("file.txt")
 		grid := NewRuneGrid(3, 3)
 

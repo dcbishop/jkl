@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dcbishop/fileaccessor"
 	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/testhelpers"
@@ -86,10 +85,8 @@ func TestRedraw(t *testing.T) {
 		go tui.Run()
 		service.WaitUntilRunning(&tui, time.Second)
 
-		fa := fileaccessor.Virtual{map[string][]byte{
-			"file.txt": {'!'},
-		}}
-		editor := editor.New(fa)
+		fs := testhelpers.GetTestFs()
+		editor := editor.New(fs)
 		editor.OpenFile("file.txt")
 
 		expected := StringToRuneGrid(testhelpers.Empty3x3, '.')

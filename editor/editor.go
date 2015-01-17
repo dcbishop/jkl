@@ -1,8 +1,6 @@
 package editor
 
-import (
-	"github.com/dcbishop/fileaccessor"
-)
+import "github.com/spf13/afero"
 
 // Settings stores settings for the editor
 // Borders draws pretty borders around panes but takes up some screen space.
@@ -135,7 +133,7 @@ func (pane *Pane) SetTopLine(topLine int) {
 
 // Editor is the core of Jkl. Maintains buffers, panes and manipluates them.
 type Editor struct {
-	fa          fileaccessor.FileAccessor
+	fs          afero.Fs
 	currentPane *Pane
 	buffers     []*Buffer
 	panes       []*Pane
@@ -143,10 +141,10 @@ type Editor struct {
 }
 
 // New constructs a new editor.
-func New(fileaccessor fileaccessor.FileAccessor) Editor {
+func New(filesystem afero.Fs) Editor {
 	pane := NewPane()
 	return Editor{
-		fa:          fileaccessor,
+		fs:          filesystem,
 		currentPane: &pane,
 		settings:    DefaultSettings(),
 	}
@@ -175,8 +173,8 @@ func (editor *Editor) openFile(filename string) Buffer {
 
 	buffer.SetFilename(filename)
 
-	if data, err := editor.fa.ReadFile(filename); err == nil {
-		buffer.SetData(data)
+	if data, err := editor.fs.Open(filename); err == nil {
+		buffer.ReadData(data)
 	} else {
 		buffer.SetData([]byte{})
 	}
