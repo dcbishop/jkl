@@ -175,6 +175,7 @@ func (editor *Editor) openFile(filename string) Buffer {
 
 	if data, err := editor.fs.Open(filename); err == nil {
 		buffer.ReadData(data)
+		data.Close()
 	} else {
 		buffer.SetData([]byte{})
 	}
