@@ -128,7 +128,7 @@ func TestRenderBuffer(t *testing.T) {
 	Convey("Basic Buffer", t, func() {
 		buffer := editor.NewBuffer()
 		buffer.SetData(renderTest)
-		So(buffer.Data(), ShouldResemble, renderTest)
+		So(editor.CompareBufferBytes(&buffer, renderTest), ShouldBeTrue)
 
 		Convey("3x3 RuneGrid", func() {
 			grid := NewRuneGrid(3, 3)

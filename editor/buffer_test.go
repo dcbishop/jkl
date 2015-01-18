@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"io/ioutil"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -9,7 +10,9 @@ import (
 func TestBuffer(t *testing.T) {
 	Convey("NewBuffer() buffer", t, func() {
 		buffer := NewBuffer()
-		So(len(buffer.Data()), ShouldEqual, 0)
+		r := buffer.NewReader()
+		bytes, _ := ioutil.ReadAll(r)
+		So(len(bytes), ShouldEqual, 0)
 		So(buffer.Filename(), ShouldEqual, "")
 
 		Convey("SetFilename()", func() {
@@ -20,7 +23,7 @@ func TestBuffer(t *testing.T) {
 		Convey("SetDataString()", func() {
 			data := "Hello, World!"
 			buffer.SetDataString(data)
-			So(buffer.Data(), ShouldResemble, []byte(data))
+			So(CompareBufferString(&buffer, data), ShouldBeTrue)
 		})
 	})
 }

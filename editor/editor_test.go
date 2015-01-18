@@ -26,7 +26,7 @@ func TestOpenFile(t *testing.T) {
 			editor.OpenFile(fakeFileName)
 
 			So(len(editor.Buffers()), ShouldEqual, 1)
-			So(editor.buffers[0].Data(), ShouldResemble, fakeFileContents)
+			So(CompareBufferBytes(editor.buffers[0], fakeFileContents), ShouldBeTrue)
 			So(editor.buffers[0].Filename(), ShouldResemble, fakeFileName)
 		})
 
@@ -34,7 +34,7 @@ func TestOpenFile(t *testing.T) {
 			So(len(editor.Buffers()), ShouldEqual, 0)
 			editor.OpenFile("file2.txt")
 			So(len(editor.Buffers()), ShouldEqual, 1)
-			So(editor.buffers[0].Data(), ShouldResemble, []byte{})
+			So(CompareBufferBytes(editor.buffers[0], []byte{}), ShouldBeTrue)
 			So(editor.buffers[0].Filename(), ShouldResemble, "file2.txt")
 		})
 	})

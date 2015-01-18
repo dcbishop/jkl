@@ -28,9 +28,10 @@ func (buffer *Buffer) SetFilename(filename string) {
 	buffer.filename = filename
 }
 
-// Data returns the buffers data as a byte slice.
-func (buffer *Buffer) Data() []byte {
-	return buffer.data
+// NewReader returns a new Reader reading from the buffer contents.
+func (buffer *Buffer) NewReader() io.Reader {
+	b := bytes.NewReader(buffer.data)
+	return b
 }
 
 // SetData sets the data of the buffer.
