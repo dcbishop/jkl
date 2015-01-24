@@ -1,13 +1,11 @@
-package app
+package main
 
 import (
 	"log"
 	"time"
 
 	"github.com/dcbishop/jkl/cli"
-	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
-	"github.com/dcbishop/jkl/ui"
 	"github.com/nsf/termbox-go"
 	"github.com/spf13/afero"
 )
@@ -15,14 +13,14 @@ import (
 // App is the main program.
 type App struct {
 	quit   chan interface{}
-	UI     ui.UI
+	UI     UI
 	state  service.State
-	editor *editor.Editor
+	editor *Editor
 }
 
 // New constructs a new app from the given options.
-func New(fs afero.Fs, UI ui.UI) App {
-	editor := editor.New(fs)
+func NewApp(fs afero.Fs, UI UI) App {
+	editor := NewEditor(fs)
 	app := App{
 		editor: &editor,
 		UI:     UI,
@@ -95,7 +93,7 @@ loop:
 	}
 }
 
-func (app *App) handleEvent(event ui.Event) {
+func (app *App) handleEvent(event Event) {
 	// [TODO]: Convert all Events to an interal format in the UI layer rather than using termbox directly. - 2014-09-27 11:27am
 	switch data := event.Data.(type) {
 	case termbox.Event:

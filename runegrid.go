@@ -1,7 +1,6 @@
-package ui
+package main
 
 import (
-	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/testhelpers"
 )
 
@@ -28,7 +27,7 @@ func NewRuneGrid(width, height int) RuneGrid {
 }
 
 // RenderEditor renders the entire editor window to the grid.
-func (grid *RuneGrid) RenderEditor(editor *editor.Editor) {
+func (grid *RuneGrid) RenderEditor(editor *Editor) {
 	x1 := 0
 	y1 := 0
 	x2 := grid.width - 1
@@ -53,7 +52,7 @@ func (grid *RuneGrid) RenderEditor(editor *editor.Editor) {
 }
 
 // RenderPane render the Pane and it's contents.
-func (grid *RuneGrid) RenderPane(editor *editor.Editor, x1, y1, x2, y2 int, pane *editor.Pane) {
+func (grid *RuneGrid) RenderPane(editor *Editor, x1, y1, x2, y2 int, pane *Pane) {
 	if pane.Buffer() == nil {
 		return
 	}
@@ -64,8 +63,8 @@ func (grid *RuneGrid) RenderPane(editor *editor.Editor, x1, y1, x2, y2 int, pane
 // UpdateTopLine sets the given Pane's TopLine based on the cursor position.
 // [TODO]: Move this into editor module and run it when resize event occurs or cursor is moved. - 2014-10-19 03:09pm
 func UpdateTopLine(
-	settings *editor.Settings,
-	pane *editor.Pane,
+	settings *Settings,
+	pane *Pane,
 	visibleHeight int,
 ) {
 	_, line := pane.Cursor().Position()
@@ -93,9 +92,9 @@ func UpdateTopLine(
 
 // RenderBuffer blits the buffer onto the grid.
 func (grid *RuneGrid) RenderBuffer(
-	settings *editor.Settings,
+	settings *Settings,
 	x1, y1, x2, y2 int,
-	buffer *editor.Buffer,
+	buffer *Buffer,
 	topLine int,
 ) {
 	if topLine < 1 {

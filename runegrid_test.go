@@ -1,10 +1,9 @@
-package ui
+package main
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -79,10 +78,10 @@ func TestRuneGrid(t *testing.T) {
 }
 
 func TestRenderEditor(t *testing.T) {
-	Convey("Basic Editor.", t, func() {
+	Convey("Basic ", t, func() {
 
 		fs := testhelpers.GetTestFs()
-		editor := editor.New(fs)
+		editor := NewEditor(fs)
 		editor.OpenFile("file.txt")
 		grid := NewRuneGrid(3, 3)
 
@@ -126,9 +125,9 @@ var renderTest = []byte(strings.Trim(OneToNine, "\n"))
 
 func TestRenderBuffer(t *testing.T) {
 	Convey("Basic Buffer", t, func() {
-		buffer := editor.NewBuffer()
+		buffer := NewBuffer()
 		buffer.SetData(renderTest)
-		So(editor.CompareBufferBytes(&buffer, renderTest), ShouldBeTrue)
+		So(CompareBufferBytes(&buffer, renderTest), ShouldBeTrue)
 
 		Convey("3x3 RuneGrid", func() {
 			grid := NewRuneGrid(3, 3)
@@ -138,7 +137,7 @@ func TestRenderBuffer(t *testing.T) {
 			Convey("Basic Render", func() {
 				expected := StringToRuneGrid(OneToNine, '.')
 
-				settings := editor.DefaultSettings()
+				settings := DefaultSettings()
 				grid.RenderBuffer(&settings, 0, 0, 3, 3, &buffer, 0)
 
 				So(grid, ShouldResemble, expected)
@@ -152,7 +151,7 @@ func TestRenderBuffer(t *testing.T) {
 				`
 				expected := StringToRuneGrid(offsetBuffer, '.')
 
-				settings := editor.DefaultSettings()
+				settings := DefaultSettings()
 				grid.RenderBuffer(&settings, 1, 1, 2, 2, &buffer, 1)
 
 				So(grid, ShouldResemble, expected)
@@ -166,7 +165,7 @@ func TestRenderBuffer(t *testing.T) {
 				`
 				expected := StringToRuneGrid(partiallyVisible, '.')
 
-				settings := editor.DefaultSettings()
+				settings := DefaultSettings()
 				grid.RenderBuffer(&settings, 1, 1, 1, 1, &buffer, 1)
 
 				So(grid, ShouldResemble, expected)
@@ -180,7 +179,7 @@ func TestRenderBuffer(t *testing.T) {
 				`
 				expected := StringToRuneGrid(partiallyVisible, '.')
 
-				settings := editor.DefaultSettings()
+				settings := DefaultSettings()
 				grid.RenderBuffer(&settings, 0, 0, 1, 1, &buffer, 1)
 
 				So(grid, ShouldResemble, expected)
@@ -189,7 +188,7 @@ func TestRenderBuffer(t *testing.T) {
 	})
 
 	Convey("Tabs should render as 4 spaces by default", t, func() {
-		buffer := editor.NewBuffer()
+		buffer := NewBuffer()
 		buffer.SetData([]byte("{\n\tint a;\n}"))
 		tabTest := `
 {..........
@@ -199,7 +198,7 @@ func TestRenderBuffer(t *testing.T) {
 `
 		grid := NewRuneGrid(11, 4)
 		expected := StringToRuneGrid(tabTest, '.')
-		settings := editor.DefaultSettings()
+		settings := DefaultSettings()
 		grid.RenderBuffer(&settings, 0, 0, 11, 4, &buffer, 1)
 		So(grid, ShouldResemble, expected)
 	})

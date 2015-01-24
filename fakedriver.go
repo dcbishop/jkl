@@ -1,4 +1,4 @@
-package ui
+package main
 
 // FakeDriver is a ConsoleDriver that doesn't do anything.
 type FakeDriver struct {

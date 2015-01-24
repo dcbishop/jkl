@@ -1,10 +1,9 @@
-package ui
+package main
 
 import (
 	"testing"
 	"time"
 
-	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
@@ -86,7 +85,7 @@ func TestRedraw(t *testing.T) {
 		service.WaitUntilRunning(&tui, time.Second)
 
 		fs := testhelpers.GetTestFs()
-		editor := editor.New(fs)
+		editor := NewEditor(fs)
 		editor.OpenFile("file.txt")
 
 		expected := StringToRuneGrid(testhelpers.Empty3x3, '.')

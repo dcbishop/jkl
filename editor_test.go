@@ -1,4 +1,4 @@
-package editor
+package main
 
 import (
 	"testing"
@@ -7,19 +7,10 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-var fakeFileName = "fakefile.txt"
-var fakeFileContents = []byte(`Hello, this is a test`)
-var fakeFileContents2 = []byte(`This is the 2nd file!`)
-
-var fakeFileSystem = map[string][]byte{
-	"fakefile.txt":  fakeFileContents,
-	"fakefile2.txt": fakeFileContents,
-}
-
 func TestOpenFile(t *testing.T) {
 	Convey("editor.OpenFile", t, func() {
 		fs := testhelpers.GetCustomTestFs(fakeFileSystem)
-		editor := New(fs)
+		editor := NewEditor(fs)
 		Convey("with a valid filename, loads file into buffer", func() {
 			So(len(editor.buffers), ShouldEqual, 0)
 

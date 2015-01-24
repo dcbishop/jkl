@@ -1,4 +1,4 @@
-package app
+package main
 
 import (
 	"testing"
@@ -7,7 +7,6 @@ import (
 	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/testhelpers"
-	"github.com/dcbishop/jkl/ui"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -21,10 +20,10 @@ var fakeFileSystem = map[string][]byte{
 }
 
 func fakeApp() App {
-	fd := ui.NewFakeDriver()
-	tui := ui.NewTerminalUI(&fd)
+	fd := NewFakeDriver()
+	tui := NewTerminalUI(&fd)
 	fs := testhelpers.GetCustomTestFs(fakeFileSystem)
-	app := New(fs, &tui)
+	app := NewApp(fs, &tui)
 	return app
 }
 

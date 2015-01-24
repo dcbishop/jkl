@@ -1,4 +1,4 @@
-package editor
+package main
 
 import "github.com/spf13/afero"
 
@@ -141,7 +141,7 @@ type Editor struct {
 }
 
 // New constructs a new editor.
-func New(filesystem afero.Fs) Editor {
+func NewEditor(filesystem afero.Fs) Editor {
 	pane := NewPane()
 	return Editor{
 		fs:          filesystem,

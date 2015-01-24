@@ -1,9 +1,8 @@
-package ui
+package main
 
 import (
 	"time"
 
-	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
 	"github.com/nsf/termbox-go"
 )
@@ -71,7 +70,7 @@ func (tui *TerminalUI) Events() <-chan Event {
 }
 
 // Redraw updates the display
-func (tui *TerminalUI) Redraw(editor *editor.Editor) {
+func (tui *TerminalUI) Redraw(editor *Editor) {
 	if !tui.state.Running() {
 		return
 	}

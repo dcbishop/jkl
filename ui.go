@@ -1,9 +1,8 @@
-package ui
+package main
 
 import (
 	"time"
 
-	"github.com/dcbishop/jkl/editor"
 	"github.com/dcbishop/jkl/service"
 )
 
@@ -11,7 +10,7 @@ import (
 type UI interface {
 	service.Service
 	Input
-	Redraw(editor *editor.Editor)
+	Redraw(editor *Editor)
 }
 
 // Input implementers provide a chanel that generates events.
@@ -79,7 +78,7 @@ func (ui *FakeUI) Events() <-chan Event {
 }
 
 // Redraw updates the display
-func (ui *FakeUI) Redraw(editor *editor.Editor) {
+func (ui *FakeUI) Redraw(editor *Editor) {
 }
 
 func (ui *FakeUI) loopUntilQuit() {
