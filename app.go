@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/service"
 	"github.com/nsf/termbox-go"
 	"github.com/spf13/afero"
@@ -31,7 +30,7 @@ func NewApp(fs afero.Fs, UI UI) App {
 }
 
 // LoadOptions loads the given options.
-func (app *App) LoadOptions(options cli.Options) {
+func (app *App) LoadOptions(options Options) {
 	app.editor.OpenFiles(options.FilesToOpen)
 }
 

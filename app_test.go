@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dcbishop/jkl/cli"
 	"github.com/dcbishop/jkl/service"
 	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
@@ -64,13 +63,13 @@ func TestRunStop(t *testing.T) {
 func TestLoadOptions(t *testing.T) {
 	app := fakeApp()
 	Convey("accepts options", t, func() {
-		options := cli.Options{}
+		options := Options{}
 
 		app.LoadOptions(options)
 	})
 
 	Convey("with 2 filenames given", t, func() {
-		options, err := cli.ParseArgs([]string{"jkl", "fakefile.txt", "fakefile2.txt"})
+		options, err := ParseArgs([]string{"jkl", "fakefile.txt", "fakefile2.txt"})
 		So(err, ShouldBeNil)
 
 		app.LoadOptions(options)

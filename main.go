@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dcbishop/jkl/cli"
 	"github.com/spf13/afero"
 )
 
@@ -18,17 +17,17 @@ func main() {
 	app.Run()
 }
 
-func processArguments() cli.Options {
-	options, err := cli.ParseArgs(os.Args)
+func processArguments() Options {
+	options, err := ParseArgs(os.Args)
 
 	if err != nil {
 		fmt.Println("ERROR: Invalid arguments.", err)
-		fmt.Println(cli.Usage())
+		fmt.Println(Usage())
 		os.Exit(1)
 	}
 
 	if options.Help {
-		fmt.Println(cli.Usage())
+		fmt.Println(Usage())
 		os.Exit(0)
 	}
 
