@@ -29,9 +29,16 @@ func NewApp(fs afero.Fs, UI UI) App {
 	return app
 }
 
+// Editor returns the app's editor.
+func (app *App) Editor() *Editor {
+	return app.editor
+}
+
 // LoadOptions loads the given options.
-func (app *App) LoadOptions(options Options) {
-	app.editor.OpenFiles(options.FilesToOpen)
+func (app *App) LoadOptions(options ...Option) {
+	for _, o := range options {
+		o(app)
+	}
 }
 
 // Run starts the main loop of the app. Will block until finished.

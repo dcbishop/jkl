@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/dcbishop/jkl/globals"
@@ -18,16 +19,34 @@ Options:
   -h --help     Show this screen.
 `
 
-// Options stores options parsed from the command line
-type Options struct {
-	FilesToOpen []string
-	Help        bool
+// Option is a command line option.
+type Option func(*App) error
+
+// Options a slice of Options
+type Options []Option
+
+// OpenFile opens the given file.
+func OpenFile(filename string) func(*App) error {
+	return func(a *App) error {
+		a.Editor().OpenFile(filename)
+		return nil
+	}
+}
+
+// DisplayHelp displays program help and quits.
+func DisplayHelp() func(*App) error {
+	return func(a *App) error {
+		// [TODO]: Store stdout in app for testing. Don't use terminalui when it's just help. - 2015-01-25 10:27pm
+		log.Println(Usage())
+		os.Exit(0)
+		return nil
+	}
 }
 
 // ParseArgs takes arguments and returns a cli.Options. Will return error if parsing failed.
 func ParseArgs(args []string) (Options, error) {
 	if len(args) < 2 {
-		return Options{}, nil
+		return []Option{}, nil
 	}
 
 	options, err := parseWithDocopt(args[1:])
@@ -43,7 +62,7 @@ func parseWithDocopt(args []string) (Options, error) {
 	version := nameVersion()
 	arguments, err := docopt.Parse(Usage(), args, false, version, false, false)
 	if err != nil {
-		return Options{}, err
+		return []Option{}, err
 	}
 
 	options := docoptArgsToOptions(arguments)
@@ -60,11 +79,13 @@ func nameVersion() string {
 func docoptArgsToOptions(arguments map[string]interface{}) Options {
 	options := Options{}
 	if arguments["--help"].(bool) {
-		options.Help = true
-		return options
+		return []Option{DisplayHelp()}
 	}
 
-	options.FilesToOpen = arguments["<file>"].([]string)
+	files := arguments["<file>"].([]string)
+	for _, f := range files {
+		options = append(options, OpenFile(f))
+	}
 
 	return options
 }

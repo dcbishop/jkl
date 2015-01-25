@@ -65,14 +65,14 @@ func TestLoadOptions(t *testing.T) {
 	Convey("accepts options", t, func() {
 		options := Options{}
 
-		app.LoadOptions(options)
+		app.LoadOptions(options...)
 	})
 
 	Convey("with 2 filenames given", t, func() {
 		options, err := ParseArgs([]string{"jkl", "fakefile.txt", "fakefile2.txt"})
 		So(err, ShouldBeNil)
 
-		app.LoadOptions(options)
+		app.LoadOptions(options...)
 		So(len(app.editor.Buffers()), ShouldEqual, 2)
 	})
 }

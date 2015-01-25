@@ -12,21 +12,6 @@ func TestParseArgs(t *testing.T) {
 		So(err, ShouldBeNil)
 		So(result, ShouldResemble, Options{})
 	})
-	Convey("with a single filename", t, func() {
-		result, err := ParseArgs([]string{"jkl", "file.txt"})
-		So(err, ShouldBeNil)
-		So(result, ShouldResemble, Options{FilesToOpen: []string{"file.txt"}})
-	})
-	Convey("with multiple files", t, func() {
-		result, err := ParseArgs([]string{"jkl", "file1.txt", "file2.txt", "file3.txt"})
-		So(err, ShouldBeNil)
-		So(result, ShouldResemble, Options{FilesToOpen: []string{"file1.txt", "file2.txt", "file3.txt"}})
-	})
-	Convey("with --help", t, func() {
-		result, err := ParseArgs([]string{"jkl", "--help"})
-		So(err, ShouldBeNil)
-		So(result, ShouldResemble, Options{Help: true})
-	})
 	Convey("with invalid argument", t, func() {
 		result, err := ParseArgs([]string{"jkl", "--badarg"})
 		So(err, ShouldNotBeNil)

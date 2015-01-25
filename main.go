@@ -13,7 +13,7 @@ func main() {
 	ui := NewTerminalUI(&driver)
 	fs := afero.OsFs{}
 	app := NewApp(&fs, &ui)
-	app.LoadOptions(options)
+	app.LoadOptions(options...)
 	app.Run()
 }
 
@@ -24,11 +24,6 @@ func processArguments() Options {
 		fmt.Println("ERROR: Invalid arguments.", err)
 		fmt.Println(Usage())
 		os.Exit(1)
-	}
-
-	if options.Help {
-		fmt.Println(Usage())
-		os.Exit(0)
 	}
 
 	return options
