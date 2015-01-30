@@ -39,8 +39,8 @@ func TestRunStop(t *testing.T) {
 				So(app.Running(), ShouldBeFalse)
 			})
 
-			Convey("app.Run() on a running app should panic", func() {
-				So(app.Run, ShouldPanic)
+			Convey("app.Run() on a running app shouldn't panic", func() {
+				So(app.Run, ShouldNotPanic)
 			})
 		})
 
