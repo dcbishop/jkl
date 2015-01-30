@@ -17,12 +17,12 @@ type App struct {
 	editor *Editor
 }
 
-// New constructs a new app from the given options.
-func NewApp(fs afero.Fs, UI UI) App {
+// NewApp constructs a new app from the given options.
+func NewApp(fs afero.Fs) App {
 	editor := NewEditor(fs)
 	app := App{
 		editor: &editor,
-		UI:     UI,
+		UI:     nil,
 	}
 	app.initializeQuitChannel()
 
@@ -32,6 +32,20 @@ func NewApp(fs afero.Fs, UI UI) App {
 // Editor returns the app's editor.
 func (app *App) Editor() *Editor {
 	return app.editor
+}
+
+// SetUI sets the UI to render the app to.
+func (app *App) SetUI(ui UI) {
+	if app.UI != nil {
+		app.UI.Stop()
+		service.WaitUntilStopped(app.UI, time.Second)
+	}
+
+	app.UI = ui
+
+	if app.UI != nil && app.Running() {
+		go app.UI.Run()
+	}
 }
 
 // LoadOptions loads the given options.
@@ -47,13 +61,15 @@ func (app *App) Run() {
 		panic("App already running.")
 	}
 
-	go app.UI.Run()
-	defer app.UI.Stop()
-
-	if service.WaitUntilRunning(app.UI, time.Second) != nil {
-		panic("Could not start UI service.")
+	if app.UI != nil && !app.UI.Running() {
+		go app.UI.Run()
+		if service.WaitUntilRunning(app.UI, time.Second) != nil {
+			panic("Could not start UI service.")
+		}
 	}
+
 	app.loopUntilQuit()
+	app.UI.Stop()
 	app.state.SetStopped()
 }
 
@@ -88,10 +104,14 @@ func (app *App) initializeQuitChannel() {
 func (app *App) loopUntilQuit() {
 loop:
 	for {
+		var events <-chan Event
+		if app.UI != nil {
+			events = app.UI.Events()
+		}
 		select {
 		case <-app.quit:
 			break loop
-		case event := <-app.UI.Events():
+		case event := <-events:
 			app.handleEvent(event)
 		default:
 			app.Update()
@@ -140,5 +160,7 @@ func (app *App) handleTermboxKeyEvent(event termbox.Event) {
 
 // Update processes input and redraws the app.
 func (app *App) Update() {
-	app.UI.Redraw(app.editor)
+	if app.UI != nil {
+		app.UI.Redraw(app.editor)
+	}
 }

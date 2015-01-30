@@ -43,6 +43,14 @@ func DisplayHelp() func(*App) error {
 	}
 }
 
+// SetUI sets the Apps UI.
+func SetUI(ui UI) func(*App) error {
+	return func(a *App) error {
+		a.SetUI(ui)
+		return nil
+	}
+}
+
 // ParseArgs takes arguments and returns a cli.Options. Will return error if parsing failed.
 func ParseArgs(args []string) (Options, error) {
 	if len(args) < 2 {
