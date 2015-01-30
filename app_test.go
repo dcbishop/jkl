@@ -12,7 +12,8 @@ func fakeApp() App {
 	fd := NewFakeDriver()
 	tui := NewTerminalUI(&fd)
 	fs := GetCustomTestFs(fakeFileSystem)
-	app := NewApp(fs, &tui)
+	app := NewApp(fs)
+	app.LoadOptions(SetUI(&tui))
 	return app
 }
 
