@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"io"
 	"os"
 
 	"github.com/dcbishop/jkl/globals"
@@ -37,7 +37,7 @@ func OpenFile(filename string) func(*App) error {
 func DisplayHelp() func(*App) error {
 	return func(a *App) error {
 		// [TODO]: Store stdout in app for testing. Don't use terminalui when it's just help. - 2015-01-25 10:27pm
-		log.Println(Usage())
+		fmt.Fprintln(a.Out, Usage())
 		os.Exit(0)
 		return nil
 	}
@@ -47,6 +47,22 @@ func DisplayHelp() func(*App) error {
 func SetUI(ui UI) func(*App) error {
 	return func(a *App) error {
 		a.SetUI(ui)
+		return nil
+	}
+}
+
+// SetOut sets the Apps output stream.
+func SetOut(out io.Writer) func(*App) error {
+	return func(a *App) error {
+		a.SetOut(out)
+		return nil
+	}
+}
+
+// SetErrOut sets the Apps error output stream.
+func SetErrOut(eout io.Writer) func(*App) error {
+	return func(a *App) error {
+		a.SetErrOut(eout)
 		return nil
 	}
 }

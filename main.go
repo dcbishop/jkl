@@ -14,6 +14,8 @@ func main() {
 	fs := afero.OsFs{}
 	app := NewApp(&fs)
 
+	options = append(options, SetOut(os.Stdout))
+	options = append(options, SetErrOut(os.Stderr))
 	options = append(options, SetUI(&ui))
 	app.LoadOptions(options...)
 	app.Run()

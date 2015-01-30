@@ -1,7 +1,9 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"io"
+	"os"
 	"time"
 
 	"github.com/dcbishop/jkl/service"
@@ -15,6 +17,9 @@ type App struct {
 	UI     UI
 	state  service.State
 	editor *Editor
+
+	Out    io.Writer
+	ErrOut io.Writer
 }
 
 // NewApp constructs a new app from the given options.
@@ -23,6 +28,8 @@ func NewApp(fs afero.Fs) App {
 	app := App{
 		editor: &editor,
 		UI:     nil,
+		Out:    os.Stdout,
+		ErrOut: os.Stderr,
 	}
 	app.initializeQuitChannel()
 
@@ -48,6 +55,16 @@ func (app *App) SetUI(ui UI) {
 	}
 }
 
+// SetOut sets the default output stream of the App.
+func (app *App) SetOut(out io.Writer) {
+	app.Out = out
+}
+
+// SetErrOut sets the error output stream of the App.
+func (app *App) SetErrOut(eout io.Writer) {
+	app.ErrOut = eout
+}
+
 // LoadOptions loads the given options.
 func (app *App) LoadOptions(options ...Option) {
 	for _, o := range options {
@@ -58,13 +75,14 @@ func (app *App) LoadOptions(options ...Option) {
 // Run starts the main loop of the app. Will block until finished.
 func (app *App) Run() {
 	if app.state.SetRunning() != nil {
-		panic("App already running.")
+		fmt.Fprintf(app.ErrOut, "App already running.")
+		return
 	}
 
 	if app.UI != nil && !app.UI.Running() {
 		go app.UI.Run()
 		if service.WaitUntilRunning(app.UI, time.Second) != nil {
-			panic("Could not start UI service.")
+			fmt.Fprintf(app.ErrOut, "Could not start UI service.")
 		}
 	}
 
@@ -82,10 +100,11 @@ func (app *App) Stop() {
 	app.quit <- true
 
 	if service.WaitUntilStopped(app.UI, time.Second) != nil {
-		log.Println("UI service did not stop in under a second.")
+		fmt.Fprintln(app.ErrOut, "UI service did not stop in under a second.")
 	}
+
 	if service.WaitUntilStopped(app, time.Second) != nil {
-		log.Println("App service did not stop in under a second.")
+		fmt.Fprintln(app.ErrOut, "App service did not stop in under a second.")
 	}
 }
 
