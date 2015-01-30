@@ -5,23 +5,13 @@ import (
 	"time"
 
 	"github.com/dcbishop/jkl/service"
-	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
 )
-
-var fakeFileName = "fakefile.txt"
-var fakeFileContents = []byte(`Hello, this is a test`)
-var fakeFileContents2 = []byte(`This is the 2nd file!`)
-
-var fakeFileSystem = map[string][]byte{
-	"fakefile.txt":  fakeFileContents,
-	"fakefile2.txt": fakeFileContents,
-}
 
 func fakeApp() App {
 	fd := NewFakeDriver()
 	tui := NewTerminalUI(&fd)
-	fs := testhelpers.GetCustomTestFs(fakeFileSystem)
+	fs := GetCustomTestFs(fakeFileSystem)
 	app := NewApp(fs, &tui)
 	return app
 }

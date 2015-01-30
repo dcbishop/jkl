@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/dcbishop/jkl/service"
-	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -84,11 +83,11 @@ func TestRedraw(t *testing.T) {
 		go tui.Run()
 		service.WaitUntilRunning(&tui, time.Second)
 
-		fs := testhelpers.GetTestFs()
+		fs := GetTestFs()
 		editor := NewEditor(fs)
 		editor.OpenFile("file.txt")
 
-		expected := StringToRuneGrid(testhelpers.Empty3x3, '.')
+		expected := StringToRuneGrid(Empty3x3, '.')
 		So(console.Grid, ShouldResemble, expected)
 
 		Convey("Render 3x3 with default settings", func() {

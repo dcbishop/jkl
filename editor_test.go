@@ -3,13 +3,12 @@ package main
 import (
 	"testing"
 
-	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestOpenFile(t *testing.T) {
 	Convey("editor.OpenFile", t, func() {
-		fs := testhelpers.GetCustomTestFs(fakeFileSystem)
+		fs := GetCustomTestFs(fakeFileSystem)
 		editor := NewEditor(fs)
 		Convey("with a valid filename, loads file into buffer", func() {
 			So(len(editor.buffers), ShouldEqual, 0)

@@ -4,15 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dcbishop/jkl/testhelpers"
 	. "github.com/smartystreets/goconvey/convey"
 )
-
-const UnicodeBox = `
-	╔═╗
-	║ ║
-	╚═╝
-`
 
 func TestStringToRuneGrid(t *testing.T) {
 	Convey("Basic 3x3 unicode box", t, func() {
@@ -29,12 +22,6 @@ func TestStringToRuneGrid(t *testing.T) {
 		So(runegrid.cells, ShouldResemble, expected)
 	})
 }
-
-const Empty3x3 = `
-...
-...
-...
-`
 
 func TestRuneGrid(t *testing.T) {
 	Convey("New 3x3 grid should be filled with NULL bytes", t, func() {
@@ -80,7 +67,7 @@ func TestRuneGrid(t *testing.T) {
 func TestRenderEditor(t *testing.T) {
 	Convey("Basic ", t, func() {
 
-		fs := testhelpers.GetTestFs()
+		fs := GetTestFs()
 		editor := NewEditor(fs)
 		editor.OpenFile("file.txt")
 		grid := NewRuneGrid(3, 3)
