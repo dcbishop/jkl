@@ -7,6 +7,7 @@ import (
 
 	"github.com/dcbishop/jkl/globals"
 	"github.com/docopt/docopt-go"
+	"github.com/spf13/afero"
 )
 
 var usageMessage = `%[1]s
@@ -63,6 +64,14 @@ func SetOut(out io.Writer) func(*App) error {
 func SetErrOut(eout io.Writer) func(*App) error {
 	return func(a *App) error {
 		a.SetErrOut(eout)
+		return nil
+	}
+}
+
+// SetFS sets the Apps filesystem handler.
+func SetFS(fs afero.Fs) func(*App) error {
+	return func(a *App) error {
+		a.SetFS(fs)
 		return nil
 	}
 }

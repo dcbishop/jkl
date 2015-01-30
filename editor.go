@@ -150,6 +150,11 @@ func NewEditor(filesystem afero.Fs) Editor {
 	}
 }
 
+// SetFS sets the filesystem handler of the Editor.
+func (editor *Editor) SetFS(fs afero.Fs) {
+	editor.fs = fs
+}
+
 // Settings returns the settings.
 func (editor *Editor) Settings() *Settings {
 	return &editor.settings

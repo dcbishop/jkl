@@ -23,8 +23,8 @@ type App struct {
 }
 
 // NewApp constructs a new app from the given options.
-func NewApp(fs afero.Fs) App {
-	editor := NewEditor(fs)
+func NewApp(options ...Option) App {
+	editor := NewEditor(afero.OsFs{})
 	app := App{
 		editor: &editor,
 		UI:     nil,
@@ -32,6 +32,8 @@ func NewApp(fs afero.Fs) App {
 		ErrOut: os.Stderr,
 	}
 	app.initializeQuitChannel()
+
+	app.LoadOptions(options...)
 
 	return app
 }
@@ -63,6 +65,11 @@ func (app *App) SetOut(out io.Writer) {
 // SetErrOut sets the error output stream of the App.
 func (app *App) SetErrOut(eout io.Writer) {
 	app.ErrOut = eout
+}
+
+// SetFS sets the filesystem handler of the App.
+func (app *App) SetFS(fs afero.Fs) {
+	app.editor.SetFS(fs)
 }
 
 // LoadOptions loads the given options.

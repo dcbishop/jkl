@@ -12,12 +12,13 @@ func main() {
 	driver := NewTermboxDriver()
 	ui := NewTerminalUI(&driver)
 	fs := afero.OsFs{}
-	app := NewApp(&fs)
 
 	options = append(options, SetOut(os.Stdout))
 	options = append(options, SetErrOut(os.Stderr))
 	options = append(options, SetUI(&ui))
-	app.LoadOptions(options...)
+	options = append(options, SetFS(&fs))
+
+	app := NewApp(options...)
 	app.Run()
 }
 
